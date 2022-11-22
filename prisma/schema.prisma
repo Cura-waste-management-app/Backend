@@ -15,20 +15,29 @@ model User{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   email String @unique
   name String?
-  post Post[]
+  country String
+  gender String
+  location Json
+  displayItem DisplayItem[]
+
+
   
 }
 
-model Post{
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-   title     String
-    content   String?
-    published Boolean? @default(false)
-    author    User?    @relation(fields: [authorId], references: [id])
-    authorId String
-}
 
-model Src{
-id String @id @default(auto()) @map("_id") @db.ObjectId
-   title     String
+model DisplayItem{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+
+  contributor User @relation(fields: [contributorId] , references: [id])
+  contributorId String
+  likes Int
+  views Int
+  rating Float
+  createdAt DateTime @default(now())
+
+
+
+
+  
 }
