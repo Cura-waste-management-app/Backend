@@ -18,7 +18,9 @@ model User{
   country String
   gender String
   location Json
+  phone Int
   displayItem DisplayItem[]
+
 
 
   
