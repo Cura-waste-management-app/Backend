@@ -46,6 +46,19 @@
   To check for the image if working check the connection with the mongodb compass
   ```
 
+  ## MongoDb Config 
+
+  ```bash 
+  Url: "mongodb+srv://divyansh1011:jRrw3wH2PPVVPJ1h@cluster0.qxtm3gq.mongodb.net/test"
+  username: divyansh1011
+  password: jRrw3wH2PPVVPJ1h
+
+  Add this link on your mongodb compass 
+
+  Docker solution coming soon this for temporary 
+
+  ```
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
