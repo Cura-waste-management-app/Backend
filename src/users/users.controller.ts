@@ -13,12 +13,20 @@ export class UsersController {
     {}
 
 
-    @Post('user')
+    @Post('adduser')
     async signupUser(
         @Body() userData: {name?: string; email: string, country: string, gender: string, location: {lat: string, lot: string}, phone: number},
 
     ): Promise<UserModel> {
         return this.userService.createUser(userData);
+    }
+
+    @Get('getuser')
+    async  getuserId(
+        @Body() userData:{id?: string}
+    ): Promise<UserModel> {
+        return this.userService.getUserById(userData);
+        
     }
 
  
