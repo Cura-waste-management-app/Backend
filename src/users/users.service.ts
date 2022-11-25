@@ -8,7 +8,7 @@ export class UsersService
 {
     constructor(private prisma :PrismaService) {}
 
-    async user(
+    async getUserById(
         userWhereUniqueInput : Prisma.UserWhereUniqueInput
     ): Promise<User | null>
     {
@@ -23,6 +23,8 @@ export class UsersService
             data,
         });
     }
+
+
 
 }
 
