@@ -7,7 +7,7 @@ export class UserListingsController {
 
     @Get('fetch')
     async getList() {
-        return await this.listingsService.shareListing('63c6a1cfa03b4c9ba4e7283f');
+        return await this.listingsService.getUserListings();
     }
 
 
