@@ -7,7 +7,7 @@ export class UserListingsController {
 
     @Get('fetch')
     async getList() {
-        return await this.listingsService.getUserListings();
+        return await this.listingsService.create();
     }
 
 

@@ -14,13 +14,22 @@ export class Listing {
     description: string;
 
     @Prop({ required: true })
+    category: string;
+
+    @Prop({ required: true, default: Date.now })
     postDate: Date;
 
-    @Prop()
-    sharedDate: Date;
+    @Prop() // when the item was shared with an user
+    sharedDate: Date; 
 
     @Prop({ required: true })
     status: string;
+
+    @Prop({ required: true })
+    ownerID: string;
+
+    @Prop({ required: true })
+    location: string;
 
     @Prop({ required: true })
     imgURL: string;
