@@ -17,10 +17,16 @@ export class Listing {
     category: string;
 
     @Prop({ required: true, default: Date.now })
-    postDate: Date;
+    postDate: string;
+
+    @Prop({ required: true, default: Date.now })
+    postTime: string;
 
     @Prop() // when the item was shared with an user
-    sharedDate: Date; 
+    sharedDate: string;
+    
+    @Prop() // when the item was shared with an user
+    sharedTime: string;
 
     @Prop({ required: true })
     status: string;
