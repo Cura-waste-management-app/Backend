@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
+import { ListingDto } from "./dto";
 
 @Injectable()
 export class UserListingsService {
@@ -15,22 +16,21 @@ export class UserListingsService {
         try {
             const uid = "1";
             var listingsDoc = await this.userModel.findById(uid, 'itemsListed');
-            if(!listingsDoc)
-            throw new HttpException("User doesn't exists!", HttpStatus.NOT_FOUND);
+            if (!listingsDoc)
+                throw new HttpException("User doesn't exists!", HttpStatus.NOT_FOUND);
 
             var listingsIds = listingsDoc.itemsListed;
-          
+
             //never use asyn/await with callbacks
-            if (!listingsIds) 
-            throw new HttpException('The user have not listed anything yet!', HttpStatus.NOT_FOUND);      
+            if (!listingsIds)
+                throw new HttpException('The user have not listed anything yet!', HttpStatus.NOT_FOUND);
             else {
                 var listings = [];
 
-                for(const listingId of listingsIds)
-                {
-                    var listing = await this.listingModel.findById(listingId).lean();                   
-                    listing['id'] = listing['_id'];                     
-                    delete listing['_id'];        
+                for (const listingId of listingsIds) {
+                    var listing = await this.listingModel.findById(listingId).lean();
+                    listing['id'] = listing['_id'];
+                    delete listing['_id'];
                     listings.push(listing);
                 }
 
@@ -60,21 +60,23 @@ export class UserListingsService {
     async shareListing(listingID: string): Promise<any> {
         const uid = "1";
         try {
-            var dateTime = new Date(); 
+            var dateTime = new Date();
             var date = dateTime.getDate();
             var time = dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
             const doc = await this.listingModel.updateOne({ _id: listingID },
-                 {'status': 'shared', 
-                 'sharedDate': date, 
-                 'sharedTime': time });
-                 
+                {
+                    'status': 'shared',
+                    'sharedDate': date,
+                    'sharedTime': time
+                });
+
             if (!doc) {
                 throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
             }
-            else{
+            else {
                 console.log("listing updated: ", doc);
                 return "Status of listing updated successfully!";
-            }              
+            }
         }
         catch (err) {
             console.log(err);
@@ -82,8 +84,36 @@ export class UserListingsService {
         }
     }
 
+    async addListing(dto: ListingDto, file: Express.Multer.File): Promise<any> {
+
+        const uid = "1";
+
+        var dateTime = new Date();
+            var date = dateTime.getDate();
+            var time = dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
+
+        const data = {
+            name: dto.name,
+            description: dto.description,
+            category: dto.category,
+            postDate: date,
+            postTime: time,
+            status: "Active",
+            ownerID: uid,
+            location: dto.location,
+            imgURL: file.filename      
+        }
+
+        await new this.listingModel(data).save();
+        const listing = await this.userModel.findById(uid, 'itemsListed');
+        await this.userModel.findByIdAndUpdate(uid, { $push: { itemsListed: listing._id }});
+
+    }
+
+
+    // just to add dummy data
     async create(): Promise<any> {
-       
+
         var now = new Date();
         var date = now.toLocaleDateString();
 
@@ -93,7 +123,7 @@ export class UserListingsService {
             description: "Perfect for chilling winters!",
             ownerID: "1",
             location: "Chandigarh",
-            category: "Clothing", 
+            category: "Clothing",
             postDate: date,
             sharedDate: '900',
             requests: 10,
@@ -108,7 +138,7 @@ export class UserListingsService {
             description: "new chair, no cracks",
             ownerID: "1",
             location: "Chandigarh",
-            category: "Furniture", 
+            category: "Furniture",
             postDate: date,
             sharedDate: '900',
             requests: 9,
@@ -126,7 +156,7 @@ export class UserListingsService {
         const uid = "1";
         console.log(listing1);
         // always pass object as the argument of model while creating instance
-        const user = new this.userModel({_id: uid, name: 'Rohit Bajaj', itemsListed: [listing1._id, listing2._id, l3._id, l4._id]});
+        const user = new this.userModel({ _id: uid, name: 'Rohit Bajaj', itemsListed: [listing1._id, listing2._id, l3._id, l4._id] });
         return user.save();
     }
 }
