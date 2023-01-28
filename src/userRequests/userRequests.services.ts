@@ -9,6 +9,19 @@ export class UserRequestsService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<listingDocument>,
         @InjectModel(User.name) private userModel: Model<userDocument>) { }
 
+    async addRequest(listingID: string)
+    {
+        const uid = "1";
+        try{
+            await this.userModel.findByIdAndUpdate(uid, { $push: { itemsRequested: listingID}});
+        }
+        catch(err)
+        {
+            console.log(err);
+            return err;
+        }
+        
+    }
 
     async getUserRequests(): Promise<any> {
 

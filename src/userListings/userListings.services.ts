@@ -104,60 +104,66 @@ export class UserListingsService {
             imgURL: file.filename      
         }
 
-        await new this.listingModel(data).save();
-        const listing = await this.userModel.findById(uid, 'itemsListed');
-        await this.userModel.findByIdAndUpdate(uid, { $push: { itemsListed: listing._id }});
-
+        try{
+            const listing = await new this.listingModel(data).save();
+            await this.userModel.findByIdAndUpdate(uid, { $push: { itemsListed: listing._id }});
+        }
+        catch(err)
+        {
+            console.log(err);
+            return err;
+        }
+        
     }
 
 
-    // just to add dummy data
-    async create(): Promise<any> {
+//     // just to add dummy data
+//     async create(): Promise<any> {
 
-        var now = new Date();
-        var date = now.toLocaleDateString();
+//         var now = new Date();
+//         var date = now.toLocaleDateString();
 
-        const data1 = {
-            status: "Active",
-            name: "Black Jacket",
-            description: "Perfect for chilling winters!",
-            ownerID: "1",
-            location: "Chandigarh",
-            category: "Clothing",
-            postDate: date,
-            sharedDate: '900',
-            requests: 10,
-            likes: 11,
-            views: 100,
-            imgURL: 'assets/images/jacket.jpg'
-        };
+//         const data1 = {
+//             status: "Active",
+//             name: "Black Jacket",
+//             description: "Perfect for chilling winters!",
+//             ownerID: "1",
+//             location: "Chandigarh",
+//             category: "Clothing",
+//             postDate: date,
+//             sharedDate: '900',
+//             requests: 10,
+//             likes: 11,
+//             views: 100,
+//             imgURL: 'assets/images/jacket.jpg'
+//         };
 
-        const data2 = {
-            status: "Shared",
-            name: "Wooden chair",
-            description: "new chair, no cracks",
-            ownerID: "1",
-            location: "Chandigarh",
-            category: "Furniture",
-            postDate: date,
-            sharedDate: '900',
-            requests: 9,
-            likes: 7,
-            views: 19,
-            imgURL: 'assets/images/chair.jpg'
-        };
+//         const data2 = {
+//             status: "Shared",
+//             name: "Wooden chair",
+//             description: "new chair, no cracks",
+//             ownerID: "1",
+//             location: "Chandigarh",
+//             category: "Furniture",
+//             postDate: date,
+//             sharedDate: '900',
+//             requests: 9,
+//             likes: 7,
+//             views: 19,
+//             imgURL: 'assets/images/chair.jpg'
+//         };
 
-        var listing1 = new this.listingModel(data1);
-        listing1 = await listing1.save();
-        var listing2 = new this.listingModel(data2);
-        listing2 = await listing2.save();
-        var l3 = await listing1.save();
-        var l4 = await listing2.save();
-        const uid = "1";
-        console.log(listing1);
-        // always pass object as the argument of model while creating instance
-        const user = new this.userModel({ _id: uid, name: 'Rohit Bajaj', itemsListed: [listing1._id, listing2._id, l3._id, l4._id] });
-        return user.save();
-    }
-}
+//         var listing1 = new this.listingModel(data1);
+//         listing1 = await listing1.save();
+//         var listing2 = new this.listingModel(data2);
+//         listing2 = await listing2.save();
+//         var l3 = await listing1.save();
+//         var l4 = await listing2.save();
+//         const uid = "1";
+//         console.log(listing1);
+//         // always pass object as the argument of model while creating instance
+//         const user = new this.userModel({ _id: uid, name: 'Rohit Bajaj', itemsListed: [listing1._id, listing2._id, l3._id, l4._id] });
+//         return user.save();
+//     }
+ }
 

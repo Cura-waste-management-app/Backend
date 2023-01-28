@@ -11,6 +11,11 @@ export class UserRequestsController {
         return await this.listingsService.getUserRequests();
     }
 
+    @Post('addRequest')
+    async addRequest(@Body('listingID') listingID: string){
+        return await this.listingsService.addRequest(listingID);
+    }
+
     @Post('deleteRequest')
     async deleteRequest(@Body('listingID') listingID: string) {
         return await this.listingsService.deleteRequest(listingID);
