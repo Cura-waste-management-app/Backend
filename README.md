@@ -22,43 +22,6 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-
-  ## Docker Config
-  ```bash
-  #Pulling the image of the mongo db database
-  docker pull mongo
-
-  #Containerise the pulled image of the mongo db
-  docker run -d -p 2717:27017 -v ~/mongo_data:/data/db --name mymongo mongo:latest
-
-  #check for all the running containers 
-  docker ps -a
-
-  #Check for the startus of the working docker daemon
-  sudo systemctl status docker 
-
-  #Restart the docker daemon
-  sudo systemctl start docker
-
-  #Restart the particular docker image
-  docker start mymongo (mymongo is the name of the image)
-
-  To check for the image if working check the connection with the mongodb compass
-  ```
-
-  ## MongoDb Config 
-
-  ```bash 
-  Url: "mongodb+srv://divyansh1011:jRrw3wH2PPVVPJ1h@cluster0.qxtm3gq.mongodb.net/test"
-  username: divyansh1011
-  password: jRrw3wH2PPVVPJ1h
-
-  Add this link on your mongodb compass 
-
-  Docker solution coming soon this for temporary 
-
-  ```
-
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.

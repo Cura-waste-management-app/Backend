@@ -1,15 +1,22 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersService } from './users/users.service';
-import { UsersController } from './users/users.controller';
-import { UsersModule } from './users/users.module';
-import { PrismaService } from './prisma.service';
+import { UserListingsModule } from './userListings/userListings.module';
+import { UserRequestsModule } from './userRequests/userRequests.module';
 
-
+// application will crash if mongodb server is down, how to handle that ???
 @Module({
-  controllers: [AppController, UsersController],
-  providers: [PrismaService , AppService, UsersService],
-  imports: [UsersModule],
+  imports: [ConfigModule.forRoot(),
+  MongooseModule.forRoot(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cura.plqaydm.mongodb.net/curaApp?retryWrites=true&w=majority`
+  ),
+  UserListingsModule,
+  UserRequestsModule
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
