@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
+import { ChatGateway } from './chat.gateway';
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -17,6 +18,6 @@ import { UserRequestsModule } from './userRequests/userRequests.module';
   UserRequestsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule { }

@@ -7,6 +7,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe( // make validationPipe available globally
     {whitelist: true} // to reject fields from request body that are not in dto
   ));
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 8080);
 }
 bootstrap(); 
