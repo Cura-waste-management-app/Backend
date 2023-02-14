@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
 import { ChatGateway } from './chat.gateway';
+import { UserChatsModule } from './userChats/userChats.module';
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -15,7 +16,8 @@ import { ChatGateway } from './chat.gateway';
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cura.plqaydm.mongodb.net/curaApp?retryWrites=true&w=majority`
   ),
   UserListingsModule,
-  UserRequestsModule
+  UserRequestsModule,
+  UserChatsModule
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
