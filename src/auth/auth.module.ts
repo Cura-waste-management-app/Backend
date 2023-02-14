@@ -9,11 +9,5 @@ import path from 'path';
   providers: [AuthService],
   controllers: [AuthController]
 })
-export class AuthModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(PreauthMiddleware).forRoutes({path: '*', method: RequestMethod.ALL}
-            
-        );  
-    }
+export class AuthModule {}
 
-}

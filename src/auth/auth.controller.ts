@@ -1,4 +1,17 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
+import { get } from 'http';
 
 @Controller('auth')
-export class AuthController {}
+export class AuthController {
+    constructor()
+    {
+
+    }
+    
+    @Get('/helloauth')
+    getHello(@Req() request: Request ): string
+    {
+        return 'Hello ';
+
+    }
+}

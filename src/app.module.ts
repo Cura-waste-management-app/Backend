@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
 import { AuthModule } from './auth/auth.module';
+import { PreauthMiddleware } from './auth/preauth.middleware';
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -21,4 +22,10 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(PreauthMiddleware).forRoutes({
+      path: '*', method: RequestMethod.ALL
+    });
+  }
+ }
