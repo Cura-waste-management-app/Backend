@@ -6,8 +6,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
+<<<<<<< HEAD
 import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
+=======
+import { ChatGateway } from './chat.gateway';
+>>>>>>> main
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -20,7 +24,7 @@ import { PreauthMiddleware } from './auth/preauth.middleware';
   AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
