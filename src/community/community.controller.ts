@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Get, Query } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { CommunityDto } from './dto/community.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,4 +23,13 @@ export class CommunityController {
             
 
         }
+
+    @Get('allcommunities')
+
+    async getCommunities(@Query('offset') offset = 0, @Query('limit') limit = 10) {
+        return this.communityService.getallCommunities(offset,limit);
+
+        
+    }
+ 
 }

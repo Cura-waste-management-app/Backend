@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Community, communityDocument } from 'src/schemas/community.schema';
 import { User, userDocument } from 'src/schemas/user.schema';
 import { CommunityDto } from './dto/community.dto';
+import { CommunityMember, CommunityMemberDocument } from 'src/schemas/community_members.schema';
 
 @Injectable()
 export class CommunityService {
-    constructor(@InjectModel(Community.name) private communityModel: Model<communityDocument>,  @InjectModel(User.name) private userModel: Model<userDocument>)
+    constructor(@InjectModel(Community.name) private communityModel: Model<communityDocument>,  @InjectModel(User.name) private userModel: Model<userDocument>,
+    @InjectModel(CommunityMember.name) private communityMemberModel: Model<CommunityMemberDocument>)
     {
 
        
@@ -30,9 +32,10 @@ export class CommunityService {
         
     };
 
-    async getallCommunities() : Promise<Community[]>
+    async getallCommunities(@Query('offset') offset =0, @Query('limit')limit =10) : Promise<Community[]>
     {
-        return this.communityModel.find().exec();
+        const communities = await this.communityModel.find().skip(+offset).limit(+limit).exec();
+        return communities;
     }
 
     async addNewCommunity(dto: CommunityDto, userId: string): Promise<Community>
@@ -70,5 +73,9 @@ export class CommunityService {
             
         }
     }
+
+    // async joinNewCommunity(userId: string): Promise<Community> {
+        
+    // }
     
 }
