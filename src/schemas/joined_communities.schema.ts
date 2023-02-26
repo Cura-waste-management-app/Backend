@@ -1,4 +1,4 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 import { User } from "./user.schema";
 import { Community } from "./community.schema";
@@ -17,3 +17,6 @@ export class JoinedCommunities
 
 
 }
+
+export const JoinedCommunitiesSchema = SchemaFactory.createForClass(JoinedCommunities);
+

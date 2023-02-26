@@ -106,7 +106,7 @@ export class UserListingsService {
 
         try{
             const listing = await new this.listingModel(data).save();
-            await this.userModel.findByIdAndUpdate(uid, { $push: { itemsListed: listing._id }});
+            await this.userModel.findByIdAndUpdate(uid, { $push: {  itemsListed: listing._id }});
         }
         catch(err)
         {

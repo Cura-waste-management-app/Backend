@@ -23,13 +23,19 @@ export class Community
     @Prop({default: 0})
     totalParticipant: Number;
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
-    user: User[];
+
+    @Prop({ required: true })
+    imgURL: string;
+
+
+
+    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
+    // user: User[];
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
     adminId : User
 
-    
+
 
 
 

@@ -1,4 +1,4 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 import { Community } from "./community.schema";
 import { User } from "./user.schema";
@@ -14,7 +14,9 @@ export class CommunityMember
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
     members: User[]
 
-    
+
 
 
 }
+
+export const CommunityMemberSchema = SchemaFactory.createForClass(CommunityMember);
