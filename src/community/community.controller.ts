@@ -4,6 +4,7 @@ import { CommunityDto } from './dto/community.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
 import { User } from 'src/schemas/user.schema';
+import { get } from 'http';
     
 @Controller('community')
 export class CommunityController {
@@ -44,6 +45,14 @@ export class CommunityController {
     console.log(userId," in controller ");
     return await this.communityService.joinCommunity(userId,communityId)
 
+    }
+
+    @Get('getcommunitybyid/:userId')
+    async getCommunityById(
+        @Param('userId') userId: string
+    )
+    {
+        return await this.communityService.getCommunitiesByUserId(userId);
     }
  
 }

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, ObjectId } from 'mongoose';
+import mongoose, { Model,  ObjectId } from 'mongoose';
 import { Community, communityDocument } from 'src/schemas/community.schema';
 import { User, userDocument } from 'src/schemas/user.schema';
 import { CommunityDto } from './dto/community.dto';
@@ -14,11 +14,22 @@ export class CommunityService {
     {    }
 
 
-    async getCommunitiesByUserId(): Promise<any>
+    async getCommunitiesByUserId(userId: string): Promise<any>
     {
         try{
-            const uid = " "
-        var communityDoc = await this.userModel.findById(uid)
+            
+        const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
+        if(!user)
+        {
+            throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);   
+        }
+        else
+        {
+            const communityDoc = await this.joinedCommunitiesModel.findById(new mongoose.Types.ObjectId(userId)).populate('joinedCommunities');
+            return communityDoc;
+
+        }
+
 
 
         }
