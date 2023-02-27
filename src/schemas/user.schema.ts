@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 
 // for what???// for what??? to form Listing class as a document?
 export type userDocument = User & Document;
@@ -7,8 +7,8 @@ export type userDocument = User & Document;
 @Schema()
 export class User {
 
-    @Prop({ required: true })
-    _id: string;
+    // @Prop({ required: true })
+    // _id: ObjectId;
 
     @Prop({ required: true })
     name: string;

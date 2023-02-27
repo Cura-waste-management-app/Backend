@@ -11,8 +11,8 @@ export class CommunityMember
     @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Community'})
     communityId: Community;
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
-    members: User[]
+    @Prop()
+    members: string;
 
 
 

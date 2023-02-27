@@ -2,6 +2,8 @@ import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFile
 import { CommunityService } from './community.service';
 import { CommunityDto } from './dto/community.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ObjectId } from 'mongoose';
+import { User } from 'src/schemas/user.schema';
     
 @Controller('community')
 export class CommunityController {
@@ -30,6 +32,18 @@ export class CommunityController {
         return this.communityService.getallCommunities(offset,limit);
 
         
+    }
+
+    @Post('joincommunity/:userId/:communityId')
+    async joinCommunity(
+
+        @Param('userId') userId: string,
+        @Param('communityId') communityId: ObjectId,
+    )
+    {
+    console.log(userId," in controller ");
+    return await this.communityService.joinCommunity(userId,communityId)
+
     }
  
 }

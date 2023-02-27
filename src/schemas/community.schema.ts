@@ -27,6 +27,8 @@ export class Community
     @Prop({ required: true })
     imgURL: string;
 
+    @Prop()
+    members: string
 
 
     // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})

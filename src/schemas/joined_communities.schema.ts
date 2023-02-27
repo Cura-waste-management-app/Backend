@@ -10,11 +10,13 @@ export class JoinedCommunities
 {
 
     @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User'})
-    userId: User
+    _id: User
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Community'})
+    @Prop({required: true, type:  [{type: mongoose.Schema.Types.ObjectId, ref: 'Community'}]})
     joinedCommunities: Community[]
 
+    // @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Listing'}]})
+    // itemsListed: Listing[]; //ids of listings
 
 }
 
