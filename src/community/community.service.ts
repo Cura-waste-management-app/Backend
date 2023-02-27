@@ -43,11 +43,43 @@ export class CommunityService {
         
     };
 
+
+    async getCommunitiesByCategory(category: string): Promise<any>
+    {
+        try
+        {
+            const communityDoc = await this.communityModel.find().exec();
+            if(!communityDoc)
+            {
+                throw new HttpException("There are no communities", HttpStatus.NOT_FOUND);
+
+            }
+            else
+            {
+                var communities = [];
+
+                for(const community of communityDoc)
+                {
+                    if(community.category == category)
+                    {
+                        communities.push(community);
+                    }
+                }
+                return communities;
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+            return error;
+        }
+    };
+
     async getallCommunities(@Query('offset') offset =0, @Query('limit')limit =10) : Promise<Community[]>
     {
         const communities = await this.communityModel.find().skip(+offset).limit(+limit).exec();
         return communities;
-    }
+    };
 
 
     async joinCommunity(userId: string, communityId: ObjectId): Promise<any>
@@ -107,12 +139,12 @@ export class CommunityService {
         
 
 
-    }
+    };
 
     async addNewCommunity(dto: CommunityDto, userId: string): Promise<Community>
     {
 
-        const admin = await this.userModel.findById(userId);
+        const admin = await this.userModel.findById(new mongoose.Types.ObjectId(userId));
 
         const uid = "1";
 

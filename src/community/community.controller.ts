@@ -54,5 +54,12 @@ export class CommunityController {
     {
         return await this.communityService.getCommunitiesByUserId(userId);
     }
- 
+
+    @Get('getcommunitybycategory/:category')
+    async getCommunityByName(
+        @Param('category') category: string
+    )
+    {
+        return await this.communityService.getCommunitiesByCategory(category);
+    }
 }
