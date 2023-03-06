@@ -1,10 +1,8 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Param,Get, Query } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { CommunityDto } from './dto/community.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
-import { get } from 'http';
+
     
 @Controller('community')
 export class CommunityController {
@@ -56,10 +54,31 @@ export class CommunityController {
     }
 
     @Get('getcommunitybycategory/:category')
-    async getCommunityByName(
+    async getCommunityByCategory(
         @Param('category') category: string
     )
     {
         return await this.communityService.getCommunitiesByCategory(category);
+    }
+
+    @Get('getcommunitybyname/:name')
+    async getCommunityByName(
+        @Param('name') name: string
+    )
+    {
+        return await this.communityService.getCommunitiesByName(name);
+    }
+
+
+    
+
+    @Get('getusersbycommunity/:communityId')
+    async getusersbycommuntiy(
+        @Param('communityId') communityId: ObjectId
+    )
+    {
+        return await this.communityService.getUsersByCommunity(communityId);
+
+
     }
 }

@@ -75,11 +75,92 @@ export class CommunityService {
         }
     };
 
+
+    async getCommunitiesByName(name:string): Promise<Community[]> 
+    {
+        try
+        {
+            const communityDoc = await this.communityModel.find().exec();
+            if(!communityDoc)
+            {
+                throw new HttpException("There are no communities", HttpStatus.NOT_FOUND);
+
+            }
+            else
+            {
+                var communities = [];
+
+                for(const community of communityDoc)
+                {
+                    if(community.name == name)
+                    {
+                        communities.push(community);
+                    }
+                }
+                return communities;
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+            return error;
+        }
+
+     }
+
+     
+    
+
     async getallCommunities(@Query('offset') offset =0, @Query('limit')limit =10) : Promise<Community[]>
     {
         const communities = await this.communityModel.find().skip(+offset).limit(+limit).exec();
         return communities;
     };
+
+
+    async getUsersByCommunity(communityId: ObjectId): Promise<any>
+    {
+        const community = await this.communityModel.findById(communityId);
+
+        if(!community)
+        {
+            throw new HttpException("Community Dosent Exist", HttpStatus.NOT_FOUND);
+        }
+        else
+        {
+            try
+            {
+
+             return await this.joinedCommunitiesModel.find({joinedCommunities: communityId}).exec();
+             
+             
+                // const comm = await this.communityMemberModel.findById(communityId);
+                // console.log(comm);
+                // const data = {
+                //     _id: communityId,
+                // }
+    
+                // if(!comm)
+                // {
+                //     console.log("No Community Here");
+                //     await new this.communityMemberModel(data).save();
+                // }
+                // else
+                // {
+                //     return await this.communityMemberModel.findById(communityId).populate('members');
+
+                // }
+            }
+            
+            catch(err)
+            {
+                console.log(err);
+                return err;
+
+            }
+
+        }
+    }
 
 
     async joinCommunity(userId: string, communityId: ObjectId): Promise<any>
@@ -175,7 +256,11 @@ export class CommunityService {
             return err;
             
         }
-    }
+    };
+
+
+
+   
 
     // async joinNewCommunity(userId: string): Promise<Community> {
         
