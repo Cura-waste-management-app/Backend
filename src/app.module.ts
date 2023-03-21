@@ -6,12 +6,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
-<<<<<<< HEAD
+
 import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
-=======
 import { ChatGateway } from './chat.gateway';
->>>>>>> main
+import { CommunityModule } from './community/community.module';
+
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -21,7 +21,8 @@ import { ChatGateway } from './chat.gateway';
   ),
   UserListingsModule,
   UserRequestsModule,
-  AuthModule
+  AuthModule,
+  CommunityModule
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
