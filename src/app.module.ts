@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
 import { ChatGateway } from './chat.gateway';
 import { CommunityModule } from './community/community.module';
+import { EventsModule } from './events/events.module';
 
 
 // application will crash if mongodb server is down, how to handle that ???
@@ -22,7 +23,8 @@ import { CommunityModule } from './community/community.module';
   UserListingsModule,
   UserRequestsModule,
   AuthModule,
-  CommunityModule
+  CommunityModule,
+  EventsModule
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
