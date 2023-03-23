@@ -14,14 +14,6 @@ export class ChatService {
 
         const uid = "1";
         try {
-            // var message = {
-            //     senderID: 2,
-            //     receiverID: "1",
-            //     messageContent: "Awesome!",
-            //     timeStamp: "9.00 pm",
-            //     imgURL: "assets/pl.png"
-            // };
-            // await new this.messageModel(message).save();
 
             var messagesDoc = await this.messageModel.find({
                 $or: [

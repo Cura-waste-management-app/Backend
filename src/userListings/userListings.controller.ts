@@ -1,41 +1,40 @@
-import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { Controller, Get, Post, Body, Param, Res } from "@nestjs/common";
 import { ListingDto } from "./dto";
-import { Express } from 'express';
 import { UserListingsService } from "./userListings.services";
+import { ObjectId } from "mongoose";
+import { ObjectIdPipe } from "src/pipes/object-id.pipe";
 
 @Controller('userListings')
 export class UserListingsController {
     constructor(private readonly listingsService: UserListingsService) { }
 
-    @Get('fetch')
-    async getListings() {
-        return await this.listingsService.getListings();
+    @Get('fetch/:userID')
+    async getListings(@Param('userID', ObjectIdPipe) uid: ObjectId) {
+        return await this.listingsService.getListings(uid);
     }
 
     @Post('deleteListing')
-    async deleteListing(@Body('listingID') listingID: string) {
-        return await this.listingsService.deleteListing(listingID);
+    async deleteListing(@Body('listingID', ObjectIdPipe) listingID: ObjectId,
+        @Body('userID', ObjectIdPipe) uid: ObjectId) {
+        return await this.listingsService.deleteListing(listingID, uid);
     }
 
     @Post('shareListing')
-    async shareListing(@Body('listingID') listingID: string) {
-        return await this.listingsService.shareListing(listingID);
+    async shareListing(@Body('listingID', ObjectIdPipe) listingID: ObjectId,
+        @Body('sharedUserName') sharedUserName: string) {
+            
+        return await this.listingsService.shareListing(listingID, sharedUserName);
     }
 
     @Post('addListing')
-    @UseInterceptors(FileInterceptor('file'))
     async addListing(
-        @Body() dto: ListingDto,
-        @UploadedFile(
-            new ParseFilePipe({
-                validators: [
-                    new MaxFileSizeValidator({ maxSize: 1000000 }), // these validators already have access to uploaded file
-                    new FileTypeValidator({ fileType: 'image/jpeg' || 'image/png' || 'image/jpg' }),
-                ],
-            })
-        ) file: Express.Multer.File) {
-        return await this.listingsService.addListing(dto, file);
+        @Body() dto: ListingDto) {
+        return await this.listingsService.addListing(dto);
+    }
+
+    @Post('create')
+    async create() {
+        await this.listingsService.create();
     }
 
 }

@@ -1,10 +1,15 @@
 import {IsNotEmpty} from 'class-validator';
 
+
 export class ListingDto{
 
     @IsNotEmpty()
-    name: string;
+    ownerID: string;
 
+    @IsNotEmpty()
+    title: string;
+    
+    @IsNotEmpty()
     description: string;
     
     @IsNotEmpty()
@@ -12,6 +17,9 @@ export class ListingDto{
 
     @IsNotEmpty()
     location: string;
+
+    @IsNotEmpty()
+    imagePath: string
 
 }
 

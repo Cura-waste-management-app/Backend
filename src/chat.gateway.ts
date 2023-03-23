@@ -8,7 +8,7 @@ export class ChatGateway {
     socket;
 
     @SubscribeMessage('chat') // name of the message we are listening to from client side
-    handleMessage(@MessageBody() message: Object): void {
+    handleMessage(@MessageBody() message:Object): void {
 
         console.log("sending message to ", message['receiverID']);
         var url = `chat/${message['receiverID']}`;
