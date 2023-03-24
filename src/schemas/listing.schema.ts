@@ -44,8 +44,8 @@ export class Listing {
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]})
     requestedUsers: User[]; 
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref: 'User'})
-    sharedUserID: User;
+    @Prop({type:mongoose.Schema.Types.ObjectId})
+    sharedUserID: mongoose.Schema.Types.ObjectId;
 
 }
 

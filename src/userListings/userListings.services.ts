@@ -48,10 +48,13 @@ export class UserListingsService {
        
         try {
             const sharedUser = await this.userModel.findOne({'name': sharedUserName});
+            if(!sharedUser)
+            return "User does not exists!";
+
             // console.log(sharedUserID._id);
             const doc = await this.listingModel.updateOne({ _id: listingID },
                 {
-                    'status': 'shared',
+                    'status': 'Confirmation pending',
                     'sharedTimeStamp': new Date(), 
                     'sharedUserID': sharedUser._id             
                 });
