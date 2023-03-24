@@ -9,8 +9,8 @@ export type eventMembersDocument = EventMembers & Document;
 
 export class EventMembers
 {
-    @Prop({required: true , type: mongoose.Schema.Types.ObjectId, ref: 'Events'})
-    eventId: Events
+    // @Prop({required: true , type: mongoose.Schema.Types.ObjectId, ref: 'Events'})
+    // eventId: Events
 
     @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref:'User'})
     members: User[]

@@ -8,8 +8,8 @@ export type CommunityMemberDocument = CommunityMember & Document;
 @Schema()
 export class CommunityMember
 {
-    @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Community'})
-    communityId: Community;
+    // @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Community'})
+    // communityId: Community;
 
     @Prop({type: [{type : mongoose.Schema.Types.ObjectId, ref: 'Users'}]})
     members: User[]

@@ -12,5 +12,5 @@ export class EventsDto
     location: string
 
     @IsNotEmpty()
-    imageURL: string
+    imgURL: string
 }
