@@ -13,6 +13,12 @@ export class HomeListingsController {
         return await this.listingsService.getProducts(uid);
     }
 
+    @Post('toggleLikeStatus')
+    async toggleLikeStatus(@Body('listingID', ObjectIdPipe) listingID: ObjectId,
+        @Body('userID', ObjectIdPipe) uid: ObjectId) {
+        return await this.listingsService.toggleLikeStatus(listingID, uid);
+    }
+
     
 
     }
