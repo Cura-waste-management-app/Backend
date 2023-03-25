@@ -11,7 +11,6 @@ import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
 
 
-import { ChatGateway } from './chat.gateway';
 
 import { ChatGateway } from './chat.gateway';
 import { CommunityModule } from './community/community.module';
