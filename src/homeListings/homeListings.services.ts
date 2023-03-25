@@ -10,10 +10,10 @@ export class HomeListingsService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<listingDocument>,
         @InjectModel(User.name) private userModel: Model<userDocument>) { }
 
-    async getProducts(): Promise<any>{
+    async getProducts(uid: ObjectId): Promise<any>{
         
         try {
-            const listings = await this.listingModel.find({status: "Active"});
+            const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}});
             return listings;
         }
         catch (err) {
@@ -21,6 +21,40 @@ export class HomeListingsService {
             return err;
         }
 
+    }
+
+
+    async toggleLikeStatus(listingID: ObjectId, uid: ObjectId): Promise<any>{
+        
+        try{
+            var found = "false";
+            
+            const listing = await this.listingModel.findById(listingID);
+            const user = await this.userModel.findById(uid);
+            user.itemsLiked.map((item)=>{
+                if(item.toString()==listing._id.toString()){
+                    found = "true";
+                }
+            });
+
+            if(found==="false"){
+                user.itemsLiked.push(listing._id);
+                listing.likes = +listing.likes + Number(1);
+            }else{
+                user.itemsLiked = user.itemsLiked.filter((item)=>{
+                    return item.toString()!==listing._id.toString();
+                });
+                listing.likes = +listing.likes - Number(1);
+            }
+            await user.save();
+            await listing.save();
+            return {listing,user};
+
+        }
+        catch(err){
+            console.log(err);
+            return err;
+        }
     }
 
     
