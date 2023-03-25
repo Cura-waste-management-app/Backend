@@ -12,7 +12,7 @@ export class EventMembers
     // @Prop({required: true , type: mongoose.Schema.Types.ObjectId, ref: 'Events'})
     // eventId: Events
 
-    @Prop({required: true, type: mongoose.Schema.Types.ObjectId, ref:'User'})
+    @Prop({required: true, type:  [{type: mongoose.Schema.Types.ObjectId, ref: 'Users'}]})
     members: User[]
 }
 

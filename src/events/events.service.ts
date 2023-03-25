@@ -118,6 +118,8 @@ export class EventsService {
                         _id: userId,
                         joinedevents: [eventId]
                     }
+                    console.log('hei')
+                    await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {members: user._id}})
 
                     if(!user)
                     {
@@ -125,8 +127,8 @@ export class EventsService {
                     }
                     else
                     {
-                        await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {members: user._id}})
-                        return ( await this.joinedeventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedevents: event._id }}))
+                        
+                        return  await this.joinedeventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedevents: event._id }})
                         
                     }
 
