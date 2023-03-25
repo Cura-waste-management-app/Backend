@@ -9,6 +9,12 @@ import { JoinedCommunities, joinedCommunitiesDocument } from 'src/schemas/joined
 import { User, userDocument } from 'src/schemas/user.schema';
 import { EventsDto } from './dto/events.dto';
 import { JoinedEvents, joinedEventsDocument } from 'src/schemas/joinedevents.schema';
+import {createHash} from 'crypto';
+// import  createHash  from 'crypto';
+
+
+
+
 
 @Injectable()
 export class EventsService {
@@ -113,14 +119,28 @@ export class EventsService {
             {
                 try{
 
-                    const user = await this.joinedeventsmodel.findById(new mongoose.Types.ObjectId(userId))
+                    const output = createId(communityId, userId)
+
+                    
+                //     const id =  userId + communityId
+                //     console.log(id)
+                //     const bytes = Buffer.from(id,'hex')
+                //    const hash_object =  createHash('sha256')
+                //    hash_object.update(bytes);
+                //    const output_bytes =  hash_object.digest();
+                //    const output_str = output_bytes.toString('hex').slice(40)
+                    
+                //     console.log(output_str)
+
+                //     const output = new mongoose.Types.ObjectId(output_str) 
                     const data ={
-                        _id: userId,
+                        _id: output,
                         joinedevents: [eventId]
                     }
                     console.log('hei')
+                     
+                    const user = await this.joinedeventsmodel.findById(output)
                     await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {members: user._id}})
-
                     if(!user)
                     {
                         await new this.joinedeventsmodel(data).save();
@@ -128,9 +148,10 @@ export class EventsService {
                     else
                     {
                         
-                        return  await this.joinedeventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedevents: event._id }})
+                        return  await this.joinedeventsmodel.findByIdAndUpdate(output, {$push: {joinedevents: event._id }})
                         
                     }
+                   
 
                 }
                 catch(error)
@@ -146,7 +167,63 @@ export class EventsService {
 
         }
 
-    
-    
+
+        async getMyEvents(communityId: ObjectId, userId: string): Promise<any>
+        {
+            const community = await this.communityModel.findById(communityId);
+            const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
+            if(!user)
+            {
+                throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);   
+            }
+
+        if(!community)
+        {
+            throw new HttpException("Community Dosent Exist", HttpStatus.NOT_FOUND);
+        }
+        else
+        {
+            try{
+                const output = createId(communityId, userId);
+                const event = await this.joinedeventsmodel.findById(output).populate('joinedevents')
+                if(!event)
+                {
+                    throw new HttpException("Events not found", HttpStatus.NOT_FOUND);
+
+                }
+                return event;
+
+
+
+            }
+            catch(err)
+            {
+                console.log(err);
+                return err;
+
+            }
+
+        }
+            
+        }
+    }
+
+    function createId(communityId: ObjectId, userId: string): any {
+        const id =  userId + communityId
+                console.log(id)
+                const bytes = Buffer.from(id,'hex')
+               const hash_object =  createHash('sha256')
+               hash_object.update(bytes);
+               const output_bytes =  hash_object.digest();
+               const output_str = output_bytes.toString('hex').slice(40)
+                
+                console.log(output_str)
+
+                const output = new mongoose.Types.ObjectId(output_str) 
+
+                return output;
+        
+
+        
     }
 

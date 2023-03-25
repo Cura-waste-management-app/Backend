@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { EventsDto } from './dto/events.dto';
 import { ObjectId } from 'mongoose';
@@ -29,5 +29,14 @@ export class EventsController {
     {
         await this.eventsService.joinEvent(communityId,userId,eventId);
 
+    }
+
+    @Get('getmyevents/:communityId/:userId')
+    async getmyevents(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string
+    )
+    {
+       return  await this.eventsService.getMyEvents(communityId,userId)
     }
 }
