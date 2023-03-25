@@ -206,7 +206,37 @@ export class EventsService {
         }
             
         }
-    }
+
+        async updateEventById(dto: EventsDto, eventId: string): Promise<any>
+        {
+        //     const community = await this.communityMemberModel.findById(communityId);
+        // console.log(community);
+                const data = {
+                    name: dto.name,
+                    description: dto.description,
+                    location: dto.location,
+                    imgURL: dto.imgURL,
+                 
+                    
+                }
+                console.log(data.name)
+                console.log(typeof(data.name))
+
+               return  await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$set: {description: data.description, name: data.name,imgURL: data.imgURL, location:data.location}})
+
+                // await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {name: data}}) //description: data.description, location: data.description, imgURL: data.imgURL//
+
+            }
+
+
+            
+
+        
+
+
+
+        }
+    
 
     function createId(communityId: ObjectId, userId: string): any {
         const id =  userId + communityId
