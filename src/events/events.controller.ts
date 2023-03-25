@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { EventsDto } from './dto/events.dto';
 import { ObjectId } from 'mongoose';
@@ -49,4 +49,18 @@ export class EventsController {
     {
         return await this.eventsService.updateEventById(dto, eventId)
     }
+
+    @Delete('deleteevent/:communityId/:userId/:eventId')
+    async deleteevent(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string
+
+    ) {
+
+        return await this.eventsService.deleteEventById(communityId,userId,eventId)
+
+        
+    }
+
 }

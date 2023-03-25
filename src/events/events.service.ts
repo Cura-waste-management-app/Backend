@@ -205,12 +205,21 @@ export class EventsService {
 
         }
             
-        }
+     }
 
         async updateEventById(dto: EventsDto, eventId: string): Promise<any>
         {
         //     const community = await this.communityMemberModel.findById(communityId);
         // console.log(community);
+        const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
+        
+        if(!event)
+        {
+            throw new HttpException('This event dosent exist', HttpStatus.NOT_FOUND)
+
+        }
+        else{
+            try {
                 const data = {
                     name: dto.name,
                     description: dto.description,
@@ -224,19 +233,76 @@ export class EventsService {
 
                return  await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$set: {description: data.description, name: data.name,imgURL: data.imgURL, location:data.location}})
 
+                
+            } catch (error) {
+                console.log(error);
+                return error;
+                
+            }
+        }
+                
                 // await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {name: data}}) //description: data.description, location: data.description, imgURL: data.imgURL//
+            }
+
+            async deleteEventById(communityId: ObjectId, userId: string,eventId: string): Promise<any>
+            {
+                const id = new mongoose.Types.ObjectId(eventId)
+                const user_id = new mongoose.Types.ObjectId(userId)
+
+                const community = await this.communityMemberModel.findById(communityId);
+                const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
+        
+        console.log(community);
+      const creator = await this.userModel.findById(user_id);
+         console.log(creator);
+
+
+        const create = await this.communityMemberModel.find({_id:communityId, members: { $in : [creator._id]}})
+        console.log("hei")
+            console.log(create)
+        
+            if(!community)
+            {
+                throw new Error('community with id ${communityId} not found' )
+   
+            }
+   
+           if(!creator)
+           {
+               throw new Error('creator with id ${creatorId} not found')
+           }
+   
+           if(!create)
+           {
+               throw new Error('User with id ${creatorId} has not joined the community ${communityId}')
+           }
+
+           const eventCheck = await this.communityModel.find({_id: communityId, events:{$in: [event._id]}})
+           if(!eventCheck)
+           {
+              throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
+           }
+           else{    
+            const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
+            const event_members = await this.eventmembersmodel.findById(event._id)
+
+            for(const user in event_members.members)
+            {
+                const output = createId(communityId, user)
+                await this.joinedeventsmodel.findByIdAndUpdate(output, {$pull: {joinedevents: event._id } })
+            }
+           }
+
+
+
+
 
             }
 
-
-            
-
-        
-
-
-
-        }
+    }
     
+
+      
 
     function createId(communityId: ObjectId, userId: string): any {
         const id =  userId + communityId
@@ -252,8 +318,6 @@ export class EventsService {
                 const output = new mongoose.Types.ObjectId(output_str) 
 
                 return output;
-        
-
         
     }
 
