@@ -8,9 +8,9 @@ import { HomeListingsService } from "./homeListings.services";
 export class HomeListingsController {
     constructor(private readonly listingsService: HomeListingsService) { }
 
-    @Get('homeproducts')
-    async getProducts() {
-        return await this.listingsService.getProducts();
+    @Get('homeproducts/:userID')
+    async getProducts(@Param('userID', ObjectIdPipe) uid: ObjectId) {
+        return await this.listingsService.getProducts(uid);
     }
 
     

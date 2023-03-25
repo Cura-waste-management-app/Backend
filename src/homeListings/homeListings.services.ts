@@ -10,10 +10,11 @@ export class HomeListingsService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<listingDocument>,
         @InjectModel(User.name) private userModel: Model<userDocument>) { }
 
-    async getProducts(): Promise<any>{
+    async getProducts(uid: ObjectId): Promise<any>{
         
         try {
-            const listings = await this.listingModel.find({status: "Active"});
+            const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}});
+
             return listings;
         }
         catch (err) {
