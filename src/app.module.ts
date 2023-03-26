@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
+import { HomeListingsModule } from './homeListings/homeListings.module';
 
 import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
@@ -25,6 +26,7 @@ import { CommunityModule } from './community/community.module';
   ),
   UserListingsModule,
   UserRequestsModule,
+  HomeListingsModule,
   AuthModule,
   CommunityModule
   ],
