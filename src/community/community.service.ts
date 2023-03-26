@@ -199,9 +199,12 @@ export class CommunityService {
               }
               else
               {
+                await this.communityMemberModel.findByIdAndUpdate(communityId, {$push:{members: new mongoose.Types.ObjectId(userId)}})
                 return (await this.joinedCommunitiesModel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedCommunities: community._id}}).then((res)=>{
                     console.log(res,"in then");
                    }).catch(err=>console.log(err)))
+
+                   //TODO: CHECK IF USER ALREADY EXIST THEN DONT UPDATE
 
               }
                
