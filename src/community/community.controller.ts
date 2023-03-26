@@ -11,7 +11,7 @@ export class CommunityController {
 
     }
 
-    @Post('createCommunity/:adminId')
+    @Post('createcommunity/:adminId')
     //@UseInterceptors(FileInterceptor('file'))
     async createCommunity(
         @Body() dto: CommunityDto,

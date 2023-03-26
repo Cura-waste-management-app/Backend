@@ -31,9 +31,11 @@ export class Community
     @Prop()
     members: string
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Events'})
-    events: Events[]
+    // @Prop({type: [{types: mongoose.Schema.Types.ObjectId, ref: 'Events'}]})
+    // events: Events[]
 
+    @Prop({ type:  [{type: mongoose.Schema.Types.ObjectId, ref: 'Events'}]})
+    events: Events[]
 
 
     // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})

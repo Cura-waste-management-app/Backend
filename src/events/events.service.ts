@@ -10,12 +10,7 @@ import { User, userDocument } from 'src/schemas/user.schema';
 import { EventsDto } from './dto/events.dto';
 import { JoinedEvents, joinedEventsDocument } from 'src/schemas/joinedevents.schema';
 import {createHash} from 'crypto';
-// import  createHash  from 'crypto';
-
-
-
-
-
+// import  createHash  from 'crypto'
 @Injectable()
 export class EventsService {
     constructor(@InjectModel(Community.name) private communityModel: Model<communityDocument>,  @InjectModel(User.name) private userModel: Model<userDocument>,
@@ -139,9 +134,10 @@ export class EventsService {
                     }
                     console.log('hei')
                      
-                    const user = await this.joinedeventsmodel.findById(output)
+                 
                     await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {members: user._id}})
-                    if(!user)
+                    const newuser = await this.joinedeventsmodel.findById(output)
+                    if(!newuser)
                     {
                         await new this.joinedeventsmodel(data).save();
                     }
@@ -243,6 +239,79 @@ export class EventsService {
                 
                 // await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {name: data}}) //description: data.description, location: data.description, imgURL: data.imgURL//
             }
+
+            async getEventsByCommunityId(communityId: ObjectId, userId: string): Promise<any>
+            {
+                const user_id = new mongoose.Types.ObjectId(userId)
+                const ouput = createId(communityId, userId);
+
+
+                const allevents = (await this.communityModel.findById(communityId).populate('events'));
+               
+
+                var myevents = await this.getMyEvents(communityId,userId);
+                myevents=myevents.joinedevents;
+                // console.log(myevents.joinedevents)
+                var exploreList = []
+                //TODO: remove myEvent wehn everything finalisre
+                var myeventsList= []
+                // console.log("=========================");
+                // console.log(myevents);
+
+                
+                for(var alleventsIndex=0;alleventsIndex<allevents.events.length;alleventsIndex++){                 
+                //    console.log(allevents.events.at(alleventsIndex)['_id'],myevents.length);
+                   var found=false;
+                    for(var myeventsIndex=0; myeventsIndex<myevents.length;myeventsIndex++){
+                        if(myevents.at(myeventsIndex)["_id"].equals(allevents.events.at(alleventsIndex)['_id'])){
+                            found=true;
+                            break;
+                        }
+                       
+                    }
+                    if(!found){
+                        exploreList.push(allevents.events.at(alleventsIndex));
+                    }
+                    else{
+                        myeventsList.push(allevents.events.at(alleventsIndex));
+                    }
+                }
+                console.log(exploreList.length,myeventsList.length,allevents.events.length)
+                // const result = allevents.events.filter(a => !myevents.find((b: => a.name === b.name))
+                //     allevents.events.filter(itemA => !myevents.some(itemB => itemA._id === itemB._id))
+                
+            //   
+            //   console.log(result)
+
+
+            //"TODO: Make Leave Api"   
+
+
+
+
+
+                // for(const event in allevents)
+                // {
+                //     console.log(event)
+                //     for(const e in myevents.joinedevents)
+                //     {
+                //         if(event!= e)
+                //         {
+                //             explore.push(event);
+                            
+                //         }
+
+                //     }
+                    
+                // }
+                    //  console.log(explore)
+
+                const res = {
+                    'myevents': myeventsList,
+                    'explore':exploreList
+                }
+                return res
+            } 
 
             async deleteEventById(communityId: ObjectId, userId: string,eventId: string): Promise<any>
             {

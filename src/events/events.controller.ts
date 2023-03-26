@@ -40,6 +40,16 @@ export class EventsController {
        return  await this.eventsService.getMyEvents(communityId,userId)
     }
 
+    @Get('geteventsbycommunityid/:communityId/:userId')
+    async geteventsbycommunityid(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string
+    )
+    {
+        return await this.eventsService.getEventsByCommunityId(communityId,userId)
+
+    }
+
     @Put('updateevent/:eventId')
     async updatevents(
         @Body() dto: EventsDto, 
