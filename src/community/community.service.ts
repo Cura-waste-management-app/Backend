@@ -131,7 +131,7 @@ export class CommunityService {
             try
             {
 
-             return await this.communityMemberModel.findById(communityId);
+             return await this.communityMemberModel.findById(communityId).populate('members');
              
              
                 // const comm = await this.communityMemberModel.findById(communityId);
@@ -242,7 +242,8 @@ export class CommunityService {
             category: dto.category,
             location: dto.location,
             adminId: admin,
-            imgURL: dto.imgURL
+            imgURL: dto.imgURL,
+            
 
         }
         try
