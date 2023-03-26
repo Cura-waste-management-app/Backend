@@ -15,6 +15,7 @@ import { PreauthMiddleware } from './auth/preauth.middleware';
 
 import { ChatGateway } from './chat.gateway';
 import { CommunityModule } from './community/community.module';
+import { EventsModule } from './events/events.module';
 
 
 
@@ -28,7 +29,8 @@ import { CommunityModule } from './community/community.module';
   UserRequestsModule,
   HomeListingsModule,
   AuthModule,
-  CommunityModule
+  CommunityModule,
+  EventsModule
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

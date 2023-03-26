@@ -242,7 +242,8 @@ export class CommunityService {
             category: dto.category,
             location: dto.location,
             adminId: admin,
-            imgURL: dto.imgURL
+            imgURL: dto.imgURL,
+            
 
         }
         try
