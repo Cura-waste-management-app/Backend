@@ -21,6 +21,9 @@ export class User {
     avatarURL: String;
 
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Listing'}]})
+    itemsLiked: Listing[];
+
+    @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Listing'}]})
     itemsListed: Listing[]; //ids of listings
 
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Listing'}]})
