@@ -1,4 +1,4 @@
-import { Model, ObjectId } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
@@ -23,7 +23,7 @@ export class UserRequestsService {
     }
 
     async getUserRequests(uid: ObjectId): Promise<any> {
-
+        
         try {
             var listingsDoc = await this.userModel.findById(uid).populate('itemsRequested');
 
@@ -63,13 +63,16 @@ export class UserRequestsService {
         try {
 
             const listing = await this.listingModel.findById(listingID);
-            if (!listing.sharedUserID || listing.sharedUserID != uid)
+           
+            if (!listing.sharedUserID || listing.sharedUserID.toString() != uid.toString())
                 return "No confirmation from the sender!";
             else {
-                await this.listingModel.updateOne({ _id: listingID },
+                
+                const doc = await this.listingModel.updateOne({ _id: listingID },
                     {
                         'status': 'Shared'
                     });
+                console.log(doc);
                 return "Item received!";
             }
 

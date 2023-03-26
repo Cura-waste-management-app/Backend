@@ -28,7 +28,7 @@ export class UserRequestsController {
 
     @Post('receiveListing')
     async completeRequest(@Body('listingID',  ObjectIdPipe) listingID: ObjectId,
-    @Body('uid', ObjectIdPipe) uid: ObjectId) {
+    @Body('userID', ObjectIdPipe) uid: ObjectId) {
         return await this.listingsService.ReceiveListing(listingID, uid);
     }
 

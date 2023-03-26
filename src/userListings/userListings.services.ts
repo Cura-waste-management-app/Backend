@@ -32,7 +32,13 @@ export class UserListingsService {
 
     async deleteListing(listingID: ObjectId, uid: ObjectId): Promise<any> {
         try {
-
+            
+            const listing = await this.listingModel.findById(listingID);
+            if(!listing)
+            {
+                throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
+            }
+            await this.listingModel.deleteOne({_id: listingID});
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsListed: listingID } });
             if (!doc) {
                 throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
@@ -74,7 +80,6 @@ export class UserListingsService {
     }
 
     async addListing(dto: ListingDto): Promise<any> {
-
 
         const data = {
             title: dto.title,
