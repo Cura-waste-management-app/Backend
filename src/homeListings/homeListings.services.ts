@@ -14,7 +14,8 @@ export class HomeListingsService {
         
         try {
             const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}});
-            return listings;
+            const user = await this.userModel.findById(uid);
+            return {listings,user};
         }
         catch (err) {
             console.log(err);
@@ -49,6 +50,40 @@ export class HomeListingsService {
             await user.save();
             await listing.save();
             return {listing,user};
+
+        }
+        catch(err){
+            console.log(err);
+            return err;
+        }
+    }
+
+
+    async toggleRequestStatus(listingID: ObjectId, uid: ObjectId): Promise<any>{
+        
+        try{
+            var found = "false";
+            
+            const listing = await this.listingModel.findById(listingID);
+            const user = await this.userModel.findById(uid);
+            user.itemsRequested.map((item)=>{
+                if(item.toString()==listing._id.toString()){
+                    found = "true";
+                }
+            });
+
+            if(found==="false"){
+                user.itemsRequested.push(listing._id);
+                listing.requests = +listing.requests + Number(1);
+            }else{
+                user.itemsRequested = user.itemsRequested.filter((item)=>{
+                    return item.toString()!==listing._id.toString();
+                });
+                listing.requests = +listing.requests - Number(1);
+            }
+            await user.save();
+            await listing.save();
+            return user;
 
         }
         catch(err){
