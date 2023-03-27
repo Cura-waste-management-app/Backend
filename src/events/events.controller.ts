@@ -40,6 +40,29 @@ export class EventsController {
        return  await this.eventsService.getMyEvents(communityId,userId)
     }
 
+    @Get('geteventsbycommunityid/:communityId/:userId')
+    async geteventsbycommunityid(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string
+    )
+    {
+        return await this.eventsService.getEventsByCommunityId(communityId,userId)
+
+    }
+
+    @Get('checkifthememberexist/:communityId/:userId/:eventId')
+    async checkifthememberexist(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string
+    ) 
+    {
+        return await this.eventsService.checkIfTheUserExistEvent(communityId, userId, eventId)
+
+
+        
+    }
+
     @Put('updateevent/:eventId')
     async updatevents(
         @Body() dto: EventsDto, 
