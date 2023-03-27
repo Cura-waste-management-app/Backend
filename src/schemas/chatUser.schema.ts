@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
 
 // for what???// for what??? to form Listing class as a document?
 export type chatUserDocument = ChatUser & Document;
@@ -8,10 +9,10 @@ export type chatUserDocument = ChatUser & Document;
 export class ChatUser {
 
     @Prop({required: true})
-    userID: String;
+    userID: mongoose.Schema.Types.ObjectId;
 
     @Prop({required: true})
-    lastMessageID: String;
+    lastMessageID: mongoose.Schema.Types.ObjectId;
 
 }
 

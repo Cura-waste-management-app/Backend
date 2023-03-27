@@ -14,6 +14,7 @@ export class ChatService {
 
         const uid = "1";
         try {
+
             // var message = {
             //     senderID: 2,
             //     receiverID: "1",
@@ -22,6 +23,7 @@ export class ChatService {
             //     imgURL: "assets/pl.png"
             // };
             // await new this.messageModel(message).save();
+
 
             var messagesDoc = await this.messageModel.find({
                 $or: [

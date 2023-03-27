@@ -8,10 +8,9 @@ export class MessageDto{
     @IsNotEmpty()
     receiverID: String;
 
-    @IsNotEmpty()
+
     messageContent: String;
 
-    @IsNotEmpty()
     imgURL: String;
     
     @IsNotEmpty()
