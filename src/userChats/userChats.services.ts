@@ -12,7 +12,7 @@ export class ChatService {
 
     async getUserChats(chatUserID: String): Promise<any> {
 
-        const uid = "1";
+        const uid = "00000001c2e6895225b91f71";
         try {
 
             // var message = {

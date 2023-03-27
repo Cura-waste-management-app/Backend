@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
-import { HomeListingsModule } from './homeListings/homeListings.
+import { HomeListingsModule } from './homeListings/homeListings.module';
 import { ChatGateway } from './chat.gateway';
 import { UserChatsModule } from './userChats/userChats.module';
 
@@ -32,7 +32,7 @@ import { EventsModule } from './events/events.module';
   UserRequestsModule,
   HomeListingsModule,
 
-  UserChatsModule
+  UserChatsModule,
 
   AuthModule,
   CommunityModule,
