@@ -53,30 +53,70 @@ export class HomeListingsService {
             const user = await this.userModel.findById(uid);
             user.itemsLiked.map((item) => {
                 if (item.toString() == listing._id.toString()) {
+
                     found = "true";
                 }
             });
 
-            if (found === "false") {
+
+            if(found==="false"){
                 user.itemsLiked.push(listing._id);
                 listing.likes = +listing.likes + Number(1);
-            } else {
-                user.itemsLiked = user.itemsLiked.filter((item) => {
-                    return item.toString() !== listing._id.toString();
+            }else{
+                user.itemsLiked = user.itemsLiked.filter((item)=>{
+                    return item.toString()!==listing._id.toString();
+
                 });
                 listing.likes = +listing.likes - Number(1);
             }
             await user.save();
             await listing.save();
-            return { listing, user };
+
+            return {listing,user};
 
         }
-        catch (err) {
+        catch(err){
+
             console.log(err);
             return err;
         }
     }
 
+
+    async toggleRequestStatus(listingID: ObjectId, uid: ObjectId): Promise<any>{
+        
+        try{
+            var found = "false";
+            
+            const listing = await this.listingModel.findById(listingID);
+            const user = await this.userModel.findById(uid);
+            user.itemsRequested.map((item)=>{
+                if(item.toString()==listing._id.toString()){
+                    found = "true";
+                }
+            });
+
+            if(found==="false"){
+                user.itemsRequested.push(listing._id);
+                listing.requests = +listing.requests + Number(1);
+            }else{
+                user.itemsRequested = user.itemsRequested.filter((item)=>{
+                    return item.toString()!==listing._id.toString();
+                });
+                listing.requests = +listing.requests - Number(1);
+            }
+            await user.save();
+            await listing.save();
+            return user;
+
+        }
+        catch(err){
+            console.log(err);
+            return err;
+        }
+    }
+
+    
 
 }
 

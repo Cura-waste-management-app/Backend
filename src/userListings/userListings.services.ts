@@ -94,7 +94,9 @@ export class UserListingsService {
 
         try {
             const listing = await new this.listingModel(data).save();
+
             await this.userModel.findByIdAndUpdate(dto.ownerID, { $push: { itemsListed: listing._id } });
+
         }
         catch (err) {
             console.log(err);

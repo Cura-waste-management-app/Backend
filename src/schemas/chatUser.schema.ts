@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
 
+
 // for what???// for what??? to form Listing class as a document?
 export type chatUserDocument = ChatUser & Document;
 

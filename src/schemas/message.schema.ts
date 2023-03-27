@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
 import mongoose, { Document } from "mongoose";
+
 
 // for what???// for what??? to form Listing class as a document?
 export type messageDocument = Message & Document;
@@ -8,6 +10,7 @@ export type messageDocument = Message & Document;
 export class Message {
 
     @Prop({required: true})
+
     senderID: mongoose.Schema.Types.ObjectId;
 
     @Prop({required: true})
