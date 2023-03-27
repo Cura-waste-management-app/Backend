@@ -13,7 +13,7 @@ export class AppController {
   @Get('/helloauth')
   getHello1(@Req() request: Request ): string
   {
-      return 'Hello ' + request['user']?.phone+ '!';
+      return 'Hello ' + request['user'].uid + request['user'].phone;
 
   }
 
