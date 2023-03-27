@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { User } from "./user.schema";
 
 // for what???// for what??? to form Listing class as a document?
 export type listingDocument = Listing & Document;
@@ -8,7 +9,7 @@ export type listingDocument = Listing & Document;
 export class Listing {
 
     @Prop({ required: true })
-    name: string;
+    title: string;
 
     @Prop()
     description: string;
@@ -16,38 +17,35 @@ export class Listing {
     @Prop({ required: true })
     category: string;
 
-    @Prop({ required: true, default: Date.now })
-    postDate: string;
-
-    @Prop({ required: true, default: Date.now })
-    postTime: string;
+    @Prop({ required: true})
+    postTimeStamp: Date;
 
     @Prop() // when the item was shared with an user
-    sharedDate: string;
-    
-    @Prop() // when the item was shared with an user
-    sharedTime: string;
+    sharedTimeStamp: Date;
 
     @Prop({ required: true })
     status: string;
 
-    @Prop({ required: true })
-    ownerID: string;
+    @Prop({required: true, type:mongoose.Schema.Types.ObjectId, ref: 'User'})
+    owner: User;
 
     @Prop({ required: true })
     location: string;
 
     @Prop({ required: true })
-    imgURL: string;
+    imagePath: string;
 
     @Prop({ default: 0 })
     requests: Number;
 
     @Prop({ default: 0 })
-    views: Number;
-
-    @Prop({ default: 0 })
     likes: Number;
+
+    @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]})
+    requestedUsers: User[]; 
+
+    @Prop({type:mongoose.Schema.Types.ObjectId})
+    sharedUserID: mongoose.Schema.Types.ObjectId;
 
 }
 
