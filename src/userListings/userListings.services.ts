@@ -60,7 +60,7 @@ export class UserListingsService {
             // console.log(sharedUserID._id);
             const doc = await this.listingModel.updateOne({ _id: listingID },
                 {
-                    'status': 'Confirmation pending',
+                    'status': 'Pending',
                     'sharedTimeStamp': new Date(), 
                     'sharedUserID': sharedUser._id             
                 });
