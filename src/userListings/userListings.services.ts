@@ -91,6 +91,8 @@ export class UserListingsService {
             location: dto.location,
             imagePath: dto.imagePath
         }
+        // console.log(data);
+      
 
         try {
             const listing = await new this.listingModel(data).save();

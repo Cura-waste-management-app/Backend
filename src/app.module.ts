@@ -10,17 +10,12 @@ import { HomeListingsModule } from './homeListings/homeListings.module';
 import { ChatGateway } from './chat.gateway';
 import { UserChatsModule } from './userChats/userChats.module';
 
-
 import { AuthModule } from './auth/auth.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
 
-
-
 import { CommunityModule } from './community/community.module';
 import { EventsModule } from './events/events.module';
-
-
-
+import { UserModule } from './user/user.module';
 
 // application will crash if mongodb server is down, how to handle that ???
 @Module({
@@ -28,6 +23,7 @@ import { EventsModule } from './events/events.module';
   MongooseModule.forRoot(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cura.plqaydm.mongodb.net/curaApp?retryWrites=true&w=majority`
   ),
+  UserModule,
   UserListingsModule,
   UserRequestsModule,
   HomeListingsModule,
