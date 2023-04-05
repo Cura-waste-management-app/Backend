@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document} from "mongoose";
 import { Listing } from "./listing.schema";
+import {Location} from "./location.schema";
 
 // for what???// for what??? to form Listing class as a document?
 export type userDocument = User & Document;
@@ -14,11 +15,17 @@ export class User {
     @Prop({ required: true })
     name: string;
 
+    @Prop({ required: true })
+    role: string;
+
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Location'})
+    location: Location
+
     @Prop()
     emailID: string;
 
     @Prop()
-    avatarURL: String;
+    avatarURL: string;
 
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Listing'}]})
     itemsLiked: Listing[];

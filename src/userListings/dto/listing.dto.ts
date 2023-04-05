@@ -9,7 +9,6 @@ export class ListingDto{
     @IsNotEmpty()
     title: string;
     
-    @IsNotEmpty()
     description: string;
     
     @IsNotEmpty()
