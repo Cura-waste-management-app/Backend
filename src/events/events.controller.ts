@@ -11,8 +11,8 @@ export class EventsController {
     @Post('createevent/:communityId/:creatorId')
     async createEvent(
         @Body() dto: EventsDto, 
-        @Param('communityId') communityId: string, 
-        @Param('creatorId') creatorId: ObjectId
+        @Param('communityId') communityId: ObjectId, 
+        @Param('creatorId') creatorId: string
     )
     {
         await this.eventsService.addNewEvent(dto, communityId, creatorId);

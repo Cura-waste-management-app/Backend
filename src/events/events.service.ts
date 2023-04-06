@@ -19,11 +19,11 @@ export class EventsService {
     @InjectModel(JoinedEvents.name) private joinedeventsmodel: Model<joinedEventsDocument>)
     {    }
 
-    async addNewEvent(dto: EventsDto, communityId: string, creatorId: ObjectId): Promise<any>
+    async addNewEvent(dto: EventsDto, communityId: ObjectId, creatorId: string): Promise<any>
     {
-        const community = await this.communityMemberModel.findById(new mongoose.Types.ObjectId(communityId));
+        const community = await this.communityMemberModel.findById(communityId);
         console.log(community);
-      const creator = await this.userModel.findById(creatorId);
+      const creator = await this.userModel.findById(new mongoose.Types.ObjectId(creatorId));
          console.log(creator);
 
 
@@ -63,12 +63,19 @@ export class EventsService {
                     }
                     try{
                                 const event = await new this.eventsmodel(data).save();
+                                const output = createId(communityId, creatorId)
+                                const data2 = {
+                                    _id: output,
+                                    joinedevents: [event._id]
+                                } 
+
                                 const data1 = {
                                     _id: event._id,
                                     members: [ creator._id]
                                 }
                                 await new this.eventmembersmodel(data1).save()
-                                await this.communityModel.findByIdAndUpdate(new mongoose.Types.ObjectId(communityId),{$push: {events: event._id }})
+                                await new this.joinedeventsmodel(data2).save()
+                                await this.communityModel.findByIdAndUpdate(communityId,{$push: {events: event._id }})
                                 
                              
                             }
@@ -418,7 +425,27 @@ export class EventsService {
 
              
         }
+        async leaveEvent(communityId: ObjectId, userId: string, eventId: string):Promise<any>
+        {
+          var present = this.checkIfTheUserExistEvent(communityId,userId,eventId)
+          if(present)
+          {
+            const output = createId(communityId,userId)
+            await this.eventmembersmodel.findByIdAndUpdate(eventId, {$pull: {members: new mongoose.Types.ObjectId(userId)}})
+            await this.joinedeventsmodel.findByIdAndUpdate(output,{$pull: {joinedevents: eventId } })
+          }
+          else
+          {
+            throw new Error('User with id ${userId} dosent exist')
+
+          }
+           
+        }
+
+        
     }
+
+
     
 
       
