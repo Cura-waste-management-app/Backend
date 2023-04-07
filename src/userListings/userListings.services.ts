@@ -4,16 +4,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
 import { ListingDto } from "./dto";
+import { Location, locationDocument } from "src/schemas/location.schema";
 
 @Injectable()
 export class UserListingsService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<listingDocument>,
-        @InjectModel(User.name) private userModel: Model<userDocument>) { }
+        @InjectModel(User.name) private userModel: Model<userDocument>,
+        @InjectModel(Location.name) private locationModel: Model<locationDocument>,) { }
 
 
     async getListings(uid: ObjectId): Promise<any> {
 
-        try {          
+        try {         
+            console.log(uid);
             var listingsDoc = await this.userModel.findById(uid).populate('itemsListed');
             var listings = listingsDoc.itemsListed;
 
@@ -38,11 +41,21 @@ export class UserListingsService {
             {
                 throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
             }
-            await this.listingModel.deleteOne({_id: listingID});
+            
+            // remove listing from the user's itemsListed
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsListed: listingID } });
             if (!doc) {
                 throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
             }
+
+            // remove listing from the requested user's itemsRequested
+            for(var i=0; i<listing.requestedUsers.length; i++)
+            {
+                await this.userModel.findByIdAndUpdate(listing.requestedUsers[i], { $pull: { itemsRequested: listingID } });         
+            }
+
+            // remove listing from the listing collection
+            await this.listingModel.deleteOne({_id: listingID});
         }
         catch (err) {
             console.log(err);
@@ -84,6 +97,9 @@ export class UserListingsService {
 
     async addListing(dto: ListingDto): Promise<any> {
 
+        const locationData = JSON.parse(dto.location);
+        const locationObj = await new this.locationModel(locationData).save();
+        
         const data = {
             title: dto.title,
             description: dto.description,
@@ -91,7 +107,7 @@ export class UserListingsService {
            postTimeStamp: new Date(),
             status: "Active",
             owner: new mongoose.Types.ObjectId(dto.ownerID),
-            location: dto.location,
+            location: locationObj._id,
             imagePath: dto.imagePath
         }
         // console.log(data);
@@ -116,13 +132,21 @@ export class UserListingsService {
             const uid = new mongoose.Types.ObjectId(2);
             var now = new Date();
           
-
+            const locationData = {
+                street: "xyz",
+                city: "xyz",
+                state: "Punjab",
+                postalCode: "140107",
+                longitude: 33.45,
+                latitude: 70.45
+            };
+            const location = await new this.locationModel(locationData).save();
             const data1 = {
                 status: "Active",
                 title: "Black Jacket",
                 description: "Perfect for chilling winters!",
                 owner: uid,
-                location: "Chandigarh",
+                location: location._id,
                 category: "Clothing",
                 postTimeStamp: Date(),
                
@@ -137,7 +161,7 @@ export class UserListingsService {
                 title: "Wooden chair",
                 description: "new chair, no cracks",
                 owner: uid,
-                location: "Chandigarh",
+                location: location._id,
                 category: "Furniture",
                 postTimeStamp: Date(),
                 sharedTimeStamp: Date(),
@@ -151,12 +175,11 @@ export class UserListingsService {
             listing1 = await listing1.save();
             var listing2 = new this.listingModel(data2);
             listing2 = await listing2.save();
-            var l3 = await listing1.save();
-            var l4 = await listing2.save();
+           
           
             console.log(listing1);
             // always pass object as the argument of model while creating instance
-            const user = new this.userModel({ _id: uid, name: 'Jhon', itemsListed: [listing1._id, listing2._id, l3._id, l4._id] });
+            const user = new this.userModel({ _id: uid, name: 'Rohit', itemsListed: [listing1._id, listing2._id], role: "Individual", location: location._id });
             return user.save();
         }
 }

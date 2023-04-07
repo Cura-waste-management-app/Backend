@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
 import { User } from "./user.schema";
+import { Location } from "./location.schema";
 
 // for what???// for what??? to form Listing class as a document?
 export type listingDocument = Listing & Document;
@@ -29,8 +30,8 @@ export class Listing {
     @Prop({required: true, type:mongoose.Schema.Types.ObjectId, ref: 'User'})
     owner: User;
 
-    @Prop({ required: true })
-    location: string;
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Location'})
+    location: Location;
 
     @Prop({ required: true })
     imagePath: string;
@@ -50,3 +51,4 @@ export class Listing {
 }
 
 export const listingSchema = SchemaFactory.createForClass(Listing);
+listingSchema.index({'location.city' :1}, {unique: true});
