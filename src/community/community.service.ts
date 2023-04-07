@@ -131,7 +131,7 @@ export class CommunityService {
             try
             {
 
-             return await this.joinedCommunitiesModel.find({joinedCommunities: communityId}).exec();
+             return await this.communityMemberModel.findById(communityId).populate('members');
              
              
                 // const comm = await this.communityMemberModel.findById(communityId);
@@ -193,16 +193,21 @@ export class CommunityService {
                 _id: userId,
                 joinedCommunities: [communityId]
               }
+              const d1 = await this.communityMemberModel.findByIdAndUpdate(communityId, {$push: {members: userId}})
+              console.log(d1);
+
               if(!user){
                 console.log("no user here")
               await new  this.joinedCommunitiesModel(data).save();
               }
               else
               {
+
                 await this.communityMemberModel.findByIdAndUpdate(communityId, {$push:{members: new mongoose.Types.ObjectId(userId)}})
-                return (await this.joinedCommunitiesModel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedCommunities: community._id}}).then((res)=>{
-                    console.log(res,"in then");
-                   }).catch(err=>console.log(err)))
+                
+
+                return (await this.joinedCommunitiesModel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedCommunities: community._id}}));
+
 
                    //TODO: CHECK IF USER ALREADY EXIST THEN DONT UPDATE
 
@@ -250,8 +255,15 @@ export class CommunityService {
         }
         try
         {
-            const community = await new this.communityModel(data)
-            return community.save();
+            const community = await new this.communityModel(data).save();
+            const data1 = {
+                _id: community._id,
+                members: [admin._id]
+                
+            }
+            await new this.communityMemberModel(data1).save()
+            return community;
+            
             
         }
         catch(err)
