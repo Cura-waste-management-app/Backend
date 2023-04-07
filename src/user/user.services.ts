@@ -15,6 +15,15 @@ export class UserService{
 
         const locationData = JSON.parse(dto.location);
         const locationObj = await new this.locationModel(locationData).save();
+        const nameExists = await this.userModel.exists({name: dto.name}).collation({
+            locale: 'en',
+            strength: 2
+          });
+        // console.log(nameExists);
+        if(nameExists != null)
+        {
+            return "Username already exists! Please try another username";
+        }
         const userData = {
             _id: new mongoose.Types.ObjectId(dto.uid),
             name: dto.name,
