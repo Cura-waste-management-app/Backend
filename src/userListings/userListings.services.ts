@@ -53,7 +53,10 @@ export class UserListingsService {
     async shareListing(listingID: ObjectId, sharedUserName: string): Promise<any> {
        
         try {
-            const sharedUser = await this.userModel.findOne({'name': sharedUserName});
+            const sharedUser = await this.userModel.findOne({'name': sharedUserName}).collation({
+                locale: 'en',
+                strength: 2
+              });
             if(!sharedUser)
             return "User does not exists!";
 
