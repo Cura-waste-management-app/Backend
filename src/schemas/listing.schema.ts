@@ -37,10 +37,10 @@ export class Listing {
     imagePath: string;
 
     @Prop({ default: 0 })
-    requests: Number;
+    requests: number;
 
     @Prop({ default: 0 })
-    likes: Number;
+    likes: number;
 
     @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]})
     requestedUsers: User[]; 

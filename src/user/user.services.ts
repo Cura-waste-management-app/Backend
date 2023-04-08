@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { Location, locationDocument } from "src/schemas/location.schema";
 import { User, userDocument } from "src/schemas/user.schema";
 import { UserDto } from "./dto";
@@ -33,6 +33,16 @@ export class UserService{
         }
 
         const user = await new this.userModel(userData).save();
+        return user;
+    }
+
+    async getUserInfo(uid: ObjectId): Promise<any>{
+
+        const user = await this.userModel.findById(uid);
+        if(user == null)
+        {
+            return "User does not exists";
+        }
         return user;
     }
     

@@ -133,6 +133,7 @@ export class UserListingsService {
             var now = new Date();
           
             const locationData = {
+                
                 street: "xyz",
                 city: "xyz",
                 state: "Punjab",
