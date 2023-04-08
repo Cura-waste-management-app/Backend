@@ -58,10 +58,21 @@ export class EventsController {
     ) 
     {
         return await this.eventsService.checkIfTheUserExistEvent(communityId, userId, eventId)
-
-
         
     }
+
+    @Get('leaveevent/:communityId/:userId/:eventId')
+    async leaveEventByUserId(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string
+    ) 
+    {
+        return await this.eventsService.leaveEvent(communityId, userId, eventId)
+        
+    }
+
+
 
     @Put('updateevent/:eventId')
     async updatevents(
