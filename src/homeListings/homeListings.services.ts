@@ -3,17 +3,20 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
+import { Location, locationDocument } from "src/schemas/location.schema";
 
 
 @Injectable()
 export class HomeListingsService {
     constructor(@InjectModel(Listing.name) private listingModel: Model<listingDocument>,
-        @InjectModel(User.name) private userModel: Model<userDocument>) { }
+        @InjectModel(User.name) private userModel: Model<userDocument>,
+        @InjectModel(Location.name) private locationModel: Model<locationDocument>,) { }
 
         async getProducts(uid: ObjectId): Promise<any>{
         
             try {
-                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}});
+                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name');
+                
                 const user = await this.userModel.findById(uid);
                 return {listings,user};
             }
@@ -23,6 +26,19 @@ export class HomeListingsService {
             }
     
         }
+
+        // async addNewProduct(): Promise<any>{
+        //     try {
+        //         const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name');
+                
+        //         const user = await this.userModel.findById(uid);
+        //         return {listings,user};
+        //     }
+        //     catch (err) {
+        //         console.log(err);
+        //         return err;
+        //     }   
+        // }
     // async getProducts(uid: ObjectId): Promise<any> {
 
     //     try {
