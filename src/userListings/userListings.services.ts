@@ -17,7 +17,7 @@ export class UserListingsService {
 
         try {         
             console.log(uid);
-            var listingsDoc = await this.userModel.findById(uid).populate('itemsListed');
+            var listingsDoc = (await this.userModel.findById(uid).populate({path: 'itemsListed', populate:{path: 'location'} }));
             var listings = listingsDoc.itemsListed;
 
             //never use asyn/await with callbacks
