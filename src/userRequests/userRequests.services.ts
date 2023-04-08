@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
+import '../error_messages';
 
 @Injectable()
 export class UserRequestsService {
@@ -10,8 +11,19 @@ export class UserRequestsService {
         @InjectModel(User.name) private userModel: Model<userDocument>) { }
 
     async addRequest(listingID: ObjectId, uid: ObjectId) {
+
         console.log(listingID, uid);
         try {
+
+            const user = await this.userModel.exists({ _id: uid });
+            if (user == null) {
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
+            }
+            const listing = await this.listingModel.exists({_id:listingID});
+            if (listing == null) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+            }
+            
             await this.listingModel.findByIdAndUpdate(listingID, { $push: { requestedUsers: uid } })
             return await this.userModel.findByIdAndUpdate(uid, { $push: { itemsRequested: listingID } });
         }
@@ -25,8 +37,12 @@ export class UserRequestsService {
     async getUserRequests(uid: ObjectId): Promise<any> {
 
         try {
-            var listingsDoc = await this.userModel.findById(uid).populate('itemsRequested');
+            const user = await this.userModel.exists({ _id: uid });
+            if (user == null) {
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
+            }
 
+            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: { path: 'location' } }));
             var listings = listingsDoc.itemsRequested;
 
             //never use asyn/await with callbacks
@@ -46,6 +62,15 @@ export class UserRequestsService {
     async deleteRequest(listingID: ObjectId, uid: ObjectId): Promise<any> {
         try {
 
+            const user = await this.userModel.exists({ _id: uid });
+            if (user == null) {
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
+            }
+            const listing = await this.listingModel.exists({_id:listingID});
+            if (listing == null) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+            }
+            
             await this.listingModel.findByIdAndUpdate(listingID, { $pull: { requestedUsers: uid } });
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsRequested: listingID } });
             if (!doc) {
@@ -62,6 +87,15 @@ export class UserRequestsService {
 
         try {
 
+            const user = await this.userModel.exists({ _id: uid });
+            if (user == null) {
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
+            }
+            const listingcheck = await this.listingModel.exists({_id:listingID});
+            if (listingcheck == null) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+            }
+            
             const listing = await this.listingModel.findById(listingID, 'sharedUserID owner');
 
             if (!listing.sharedUserID || listing.sharedUserID.toString() != uid.toString())

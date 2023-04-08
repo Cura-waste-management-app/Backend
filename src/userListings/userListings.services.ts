@@ -5,6 +5,7 @@ import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
 import { ListingDto } from "./dto";
 import { Location, locationDocument } from "src/schemas/location.schema";
+import '../error_messages';
 
 @Injectable()
 export class UserListingsService {
@@ -12,12 +13,15 @@ export class UserListingsService {
         @InjectModel(User.name) private userModel: Model<userDocument>,
         @InjectModel(Location.name) private locationModel: Model<locationDocument>,) { }
 
-
     async getListings(uid: ObjectId): Promise<any> {
 
-        try {         
+        try {
             console.log(uid);
-            var listingsDoc = (await this.userModel.findById(uid).populate({path: 'itemsListed', populate:{path: 'location'} }));
+            const user = await this.userModel.exists({ _id: uid });
+            if (user == null) {
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
+            }
+            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsListed', populate: { path: 'location' } }));
             var listings = listingsDoc.itemsListed;
 
             //never use asyn/await with callbacks
@@ -35,27 +39,25 @@ export class UserListingsService {
 
     async deleteListing(listingID: ObjectId, uid: ObjectId): Promise<any> {
         try {
-            
-            const listing = await this.listingModel.findById(listingID);
-            if(!listing)
-            {
-                throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
+
+            const listing = await this.listingModel.findById(listingID, 'requestedUsers');
+            if (!listing) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
-            
+
             // remove listing from the user's itemsListed
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsListed: listingID } });
             if (!doc) {
-                throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
 
             // remove listing from the requested user's itemsRequested
-            for(var i=0; i<listing.requestedUsers.length; i++)
-            {
-                await this.userModel.findByIdAndUpdate(listing.requestedUsers[i], { $pull: { itemsRequested: listingID } });         
+            for (var i = 0; i < listing.requestedUsers.length; i++) {
+                await this.userModel.findByIdAndUpdate(listing.requestedUsers[i], { $pull: { itemsRequested: listingID } });
             }
 
             // remove listing from the listing collection
-            await this.listingModel.deleteOne({_id: listingID});
+            await this.listingModel.deleteOne({ _id: listingID });
         }
         catch (err) {
             console.log(err);
@@ -64,21 +66,26 @@ export class UserListingsService {
     }
 
     async shareListing(listingID: ObjectId, sharedUserName: string): Promise<any> {
-       
+
         try {
-            const sharedUser = await this.userModel.findOne({'name': sharedUserName}).collation({
+            const listing = await this.listingModel.exists({_id:listingID});
+            if (listing == null) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+            }
+            
+            const sharedUser = await this.userModel.findOne({ 'name': sharedUserName }).collation({
                 locale: 'en',
                 strength: 2
-              });
-            if(!sharedUser)
-            return "User does not exists!";
+            });
+            if (!sharedUser)
+                return "User does not exists!";
 
             // console.log(sharedUserID._id);
             const doc = await this.listingModel.updateOne({ _id: listingID },
                 {
                     'status': 'Pending',
-                    'sharedTimeStamp': new Date(), 
-                    'sharedUserID': sharedUser._id             
+                    'sharedTimeStamp': new Date(),
+                    'sharedUserID': sharedUser._id
                 });
 
             if (!doc) {
@@ -99,19 +106,19 @@ export class UserListingsService {
 
         const locationData = JSON.parse(dto.location);
         const locationObj = await new this.locationModel(locationData).save();
-        
+
         const data = {
             title: dto.title,
             description: dto.description,
             category: dto.category,
-           postTimeStamp: new Date(),
+            postTimeStamp: new Date(),
             status: "Active",
             owner: new mongoose.Types.ObjectId(dto.ownerID),
             location: locationObj._id,
             imagePath: dto.imagePath
         }
         // console.log(data);
-      
+
 
         try {
             const listing = await new this.listingModel(data).save();
@@ -127,61 +134,61 @@ export class UserListingsService {
     }
 
 
-        // just to add dummy data
-        async create(): Promise<any> {
-            const uid = new mongoose.Types.ObjectId(2);
-            var now = new Date();
-          
-            const locationData = {
-                
-                street: "xyz",
-                city: "xyz",
-                state: "Punjab",
-                postalCode: "140107",
-                longitude: 33.45,
-                latitude: 70.45
-            };
-            const location = await new this.locationModel(locationData).save();
-            const data1 = {
-                status: "Active",
-                title: "Black Jacket",
-                description: "Perfect for chilling winters!",
-                owner: uid,
-                location: location._id,
-                category: "Clothing",
-                postTimeStamp: Date(),
-               
-                requests: 10,
-                likes: 11,
-              
-                imagePath: 'assets/images/jacket.jpg'
-            };
+    // just to add dummy data
+    async create(): Promise<any> {
+        const uid = new mongoose.Types.ObjectId(2);
+        var now = new Date();
 
-            const data2 = {
-                status: "Shared",
-                title: "Wooden chair",
-                description: "new chair, no cracks",
-                owner: uid,
-                location: location._id,
-                category: "Furniture",
-                postTimeStamp: Date(),
-                sharedTimeStamp: Date(),
-                requests: 9,
-                likes: 7,
-               
-                imagePath: 'assets/images/chair.jpg'
-            };
+        const locationData = {
 
-            var listing1 = new this.listingModel(data1);
-            listing1 = await listing1.save();
-            var listing2 = new this.listingModel(data2);
-            listing2 = await listing2.save();
-           
-          
-            console.log(listing1);
-            // always pass object as the argument of model while creating instance
-            const user = new this.userModel({ _id: uid, name: 'Rohit', itemsListed: [listing1._id, listing2._id], role: "Individual", location: location._id });
-            return user.save();
-        }
+            street: "xyz",
+            city: "xyz",
+            state: "Punjab",
+            postalCode: "140107",
+            longitude: 33.45,
+            latitude: 70.45
+        };
+        const location = await new this.locationModel(locationData).save();
+        const data1 = {
+            status: "Active",
+            title: "Black Jacket",
+            description: "Perfect for chilling winters!",
+            owner: uid,
+            location: location._id,
+            category: "Clothing",
+            postTimeStamp: Date(),
+
+            requests: 10,
+            likes: 11,
+
+            imagePath: 'assets/images/jacket.jpg'
+        };
+
+        const data2 = {
+            status: "Shared",
+            title: "Wooden chair",
+            description: "new chair, no cracks",
+            owner: uid,
+            location: location._id,
+            category: "Furniture",
+            postTimeStamp: Date(),
+            sharedTimeStamp: Date(),
+            requests: 9,
+            likes: 7,
+
+            imagePath: 'assets/images/chair.jpg'
+        };
+
+        var listing1 = new this.listingModel(data1);
+        listing1 = await listing1.save();
+        var listing2 = new this.listingModel(data2);
+        listing2 = await listing2.save();
+
+
+        console.log(listing1);
+        // always pass object as the argument of model while creating instance
+        const user = new this.userModel({ _id: uid, name: 'Rohit', itemsListed: [listing1._id, listing2._id], role: "Individual", location: location._id });
+        return user.save();
+    }
 }
 
