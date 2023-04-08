@@ -11,8 +11,8 @@ export class EventsController {
     @Post('createevent/:communityId/:creatorId')
     async createEvent(
         @Body() dto: EventsDto, 
-        @Param('communityId') communityId: string, 
-        @Param('creatorId') creatorId: ObjectId
+        @Param('communityId') communityId: ObjectId, 
+        @Param('creatorId') creatorId: string
     )
     {
         await this.eventsService.addNewEvent(dto, communityId, creatorId);
@@ -58,10 +58,21 @@ export class EventsController {
     ) 
     {
         return await this.eventsService.checkIfTheUserExistEvent(communityId, userId, eventId)
-
-
         
     }
+
+    @Get('leaveevent/:communityId/:userId/:eventId')
+    async leaveEventByUserId(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string
+    ) 
+    {
+        return await this.eventsService.leaveEvent(communityId, userId, eventId)
+        
+    }
+
+
 
     @Put('updateevent/:eventId')
     async updatevents(
@@ -73,7 +84,7 @@ export class EventsController {
         return await this.eventsService.updateEventById(dto, eventId)
     }
 
-    @Delete('deleteevent/:communityId/:userId/:eventId')
+    @Post('deleteevent/:communityId/:userId/:eventId')
     async deleteevent(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string,
