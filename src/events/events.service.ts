@@ -353,31 +353,39 @@ export class EventsService {
                throw new Error('User with id ${creatorId} has not joined the community ${communityId}')
            }
 
-           const eventCheck = await this.communityModel.find({_id: communityId, events:{$in: [event._id]}})
+           const eventCheck = await this.communityModel.find({events:{$in: [event._id]}})
+           console.log("hei again")
+           console.log(eventCheck)
+
            if(!eventCheck)
            {
               throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
            }
            else{    
             const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-            const event_members = await this.eventmembersmodel.findById(event._id)
+            const event_members = (await this.eventmembersmodel.findById(event._id)).members
+            console.log("helloo again")
+            console.log(event_members)
 
-            for(const user in event_members.members)
+            for(var e = 0 ; e<event_members.length;e++ )
             {
-                const output = createId(communityId, user)
-                await this.joinedeventsmodel.findByIdAndUpdate(output, {$pull: {joinedevents: event._id } })
+                console.log(event_members.at(e));
+                const output = createId(communityId, String(event_members.at(e)))
+                console.log(output)
+                await this.joinedeventsmodel.findByIdAndUpdate(output, {$pull: {joinedevents:event._id }})
+                console.log("ji ji")
             }
+            console.log("ji ji ji")
+            await this.eventmembersmodel.findByIdAndDelete(event._id)
+            console.log("ji ji ji")
+            await this.communityModel.findByIdAndUpdate(community._id,{$pull: {events: event._id}})
+            console.log("ji ji ji ji")
+            await this.eventsmodel.findByIdAndDelete(event._id)        
            }
 
-
-
-
-
-            }
+       }
 
             //TODO: CHECK IF SOMEONE IS PART OF THE EVENT OR COMMUNITY OR NOT
-
-
 
          async checkIfTheUserExistEvent(communityId: ObjectId, userId: string, eventId: string)
             {

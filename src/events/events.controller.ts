@@ -73,7 +73,7 @@ export class EventsController {
         return await this.eventsService.updateEventById(dto, eventId)
     }
 
-    @Delete('deleteevent/:communityId/:userId/:eventId')
+    @Post('deleteevent/:communityId/:userId/:eventId')
     async deleteevent(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string,
