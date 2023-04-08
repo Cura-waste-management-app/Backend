@@ -37,7 +37,13 @@ export class User {
     itemsRequested: Listing[]; //ids of listings
 
     @Prop({ default: 0 })
-    Points: Number;
+    itemsShared: number;
+
+    @Prop({ default: 0 })
+    itemsReceived: number;
+
+    @Prop({ default: 0 })
+    Points: number;
 
 }
 

@@ -23,7 +23,7 @@ export class UserRequestsService {
     }
 
     async getUserRequests(uid: ObjectId): Promise<any> {
-        
+
         try {
             var listingsDoc = await this.userModel.findById(uid).populate('itemsRequested');
 
@@ -62,17 +62,29 @@ export class UserRequestsService {
 
         try {
 
-            const listing = await this.listingModel.findById(listingID);
-           
+            const listing = await this.listingModel.findById(listingID, 'sharedUserID owner');
+
             if (!listing.sharedUserID || listing.sharedUserID.toString() != uid.toString())
                 return "No confirmation from the sender!";
             else {
-                
+
                 const doc = await this.listingModel.updateOne({ _id: listingID },
                     {
                         'status': 'Shared'
                     });
                 console.log(doc);
+
+                const receiver = await this.userModel.findById(uid, 'itemsReceived');
+                await this.userModel.updateOne({ _id: uid },
+                    {
+                        'itemsReceived': receiver.itemsReceived + 1
+                    });
+                const sender = await this.userModel.findById(listing.owner, 'itemsShared');
+                await this.userModel.updateOne({ _id: uid },
+                    {
+                        'itemsShared': sender.itemsShared + 1
+                    });
+                    
                 return "Item received!";
             }
 

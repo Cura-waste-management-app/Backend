@@ -61,13 +61,13 @@ export class HomeListingsService {
 
             if(found==="false"){
                 user.itemsLiked.push(listing._id);
-                listing.likes = +listing.likes + Number(1);
+                listing.likes = listing.likes + 1;
             }else{
                 user.itemsLiked = user.itemsLiked.filter((item)=>{
                     return item.toString()!==listing._id.toString();
 
                 });
-                listing.likes = +listing.likes - Number(1);
+                listing.likes = listing.likes - 1;
             }
             await user.save();
             await listing.save();
@@ -98,12 +98,12 @@ export class HomeListingsService {
 
             if(found==="false"){
                 user.itemsRequested.push(listing._id);
-                listing.requests = +listing.requests + Number(1);
+                listing.requests = listing.requests + 1;
             }else{
                 user.itemsRequested = user.itemsRequested.filter((item)=>{
                     return item.toString()!==listing._id.toString();
                 });
-                listing.requests = +listing.requests - Number(1);
+                listing.requests = listing.requests - 1;
             }
             await user.save();
             await listing.save();
