@@ -21,7 +21,7 @@ export class Events
     creatorId: User
 
     @Prop({default: 0})
-    totalMembers: Number;
+    totalMembers: number;
 
     @Prop()
     imgURL: string;

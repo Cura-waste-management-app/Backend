@@ -56,6 +56,7 @@ export class EventsService {
             const data = {
                         name: dto.name,
                         description: dto.description,
+                        totalMembers: 1,
                         location: dto.location,
                         imgURL: dto.imgURL,
                         communityId: community,
@@ -64,17 +65,28 @@ export class EventsService {
                     try{
                                 const event = await new this.eventsmodel(data).save();
                                 const output = createId(communityId, creatorId)
+                                const user_exist = await this.joinedeventsmodel.exists({_id: output})
                                 const data2 = {
                                     _id: output,
                                     joinedevents: [event._id]
                                 } 
 
+                               
                                 const data1 = {
                                     _id: event._id,
                                     members: [ creator._id]
                                 }
                                 await new this.eventmembersmodel(data1).save()
-                                await new this.joinedeventsmodel(data2).save()
+                                if(user_exist == null)
+                                {
+                                    await new this.joinedeventsmodel(data2).save()
+
+                                }
+                                else
+                                {
+                                    await this.joinedeventsmodel.findByIdAndUpdate(output, {$push: {joinedevents: event._id}})
+                                 }
+                                
                                 await this.communityModel.findByIdAndUpdate(communityId,{$push: {events: event._id }})
                                 
                              
@@ -139,9 +151,15 @@ export class EventsService {
                         _id: output,
                         joinedevents: [eventId]
                     }
+
                     console.log('hei')
                      
-                 
+                 const event = await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId))
+                 event.totalMembers = event.totalMembers + 1;
+
+                 await event.save()
+
+
                     await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), {$push: {members: user._id}})
                     const newuser = await this.joinedeventsmodel.findById(output)
                     if(!newuser)
