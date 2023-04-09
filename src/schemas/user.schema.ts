@@ -43,7 +43,7 @@ export class User {
     itemsReceived: number;
 
     @Prop({ default: 0 })
-    Points: number;
+    points: number;
 
 }
 
