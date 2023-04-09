@@ -449,9 +449,32 @@ export class EventsService {
           }
            
         }
+        async getUserByEvents(communityId: ObjectId, eventId: string): Promise<any>
+        {
+            const community = await this.communityModel.findById(communityId);
+            if(!community)
+            {
+                throw new HttpException('The community does not exist', HttpStatus.NOT_FOUND);
+    
+            }
+            const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
+            console.log(event)
+            const eventCheck = await this.communityModel.find({_id: communityId, events:{$in: [event._id]}})
+             if(!eventCheck)
+             {
+                throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
+             }
+
+             const members = (await this.eventmembersmodel.findById(event._id)).populate('members')
+            console.log(members)
+
+            return members;
+
+        }
 
         
     }
+    
 
 
     
