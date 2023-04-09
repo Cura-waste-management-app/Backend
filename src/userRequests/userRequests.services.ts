@@ -19,11 +19,11 @@ export class UserRequestsService {
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            const listing = await this.listingModel.exists({_id:listingID});
+            const listing = await this.listingModel.exists({ _id: listingID });
             if (listing == null) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
-            
+
             await this.listingModel.findByIdAndUpdate(listingID, { $push: { requestedUsers: uid } })
             return await this.userModel.findByIdAndUpdate(uid, { $push: { itemsRequested: listingID } });
         }
@@ -43,7 +43,13 @@ export class UserRequestsService {
             }
 
             // var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: { path: 'location' } }));
-            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: [{ path: 'location' }, {path:'owner', select:'name avatarURL'}] }));
+            var listingsDoc = (await this.userModel.findById(uid).populate(
+                {
+                    path: 'itemsRequested',
+                    populate: [{ path: 'location' },
+                    { path: 'owner', select: 'name avatarURL points itemsReceived itemsShared' },
+                    { path: 'requestedUsers', select: 'name avatarURL points itemsReceived itemsShared' }]
+                }));
 
             var listings = listingsDoc.itemsRequested;
 
@@ -68,11 +74,11 @@ export class UserRequestsService {
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            const listing = await this.listingModel.exists({_id:listingID});
+            const listing = await this.listingModel.exists({ _id: listingID });
             if (listing == null) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
-            
+
             await this.listingModel.findByIdAndUpdate(listingID, { $pull: { requestedUsers: uid } });
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsRequested: listingID } });
             if (!doc) {
@@ -93,11 +99,11 @@ export class UserRequestsService {
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            const listingcheck = await this.listingModel.exists({_id:listingID});
+            const listingcheck = await this.listingModel.exists({ _id: listingID });
             if (listingcheck == null) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
-            
+
             const listing = await this.listingModel.findById(listingID, 'sharedUserID owner');
 
             if (!listing.sharedUserID || listing.sharedUserID.toString() != uid.toString())
@@ -120,7 +126,7 @@ export class UserRequestsService {
                     {
                         'itemsShared': sender.itemsShared + 1
                     });
-                    
+
                 return "Item received!";
             }
 

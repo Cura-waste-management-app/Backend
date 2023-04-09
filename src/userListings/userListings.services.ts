@@ -21,7 +21,12 @@ export class UserListingsService {
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsListed', populate: [{ path: 'location' }, {path:'owner', select:'name avatarURL'}] }));
+            var listingsDoc = (await this.userModel.findById(uid).populate({
+                path: 'itemsListed',
+                populate: [{ path: 'location' },
+                { path: 'owner', select: 'name avatarURL points itemsReceived itemsShared' },
+                { path: 'requestedUsers', select: 'name avatarURL points itemsReceived itemsShared' }]
+            }));
             var listings = listingsDoc.itemsListed;
 
             //never use asyn/await with callbacks
@@ -68,11 +73,11 @@ export class UserListingsService {
     async shareListing(listingID: ObjectId, sharedUserName: string): Promise<any> {
 
         try {
-            const listing = await this.listingModel.exists({_id:listingID});
+            const listing = await this.listingModel.exists({ _id: listingID });
             if (listing == null) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
-            
+
             const sharedUser = await this.userModel.findOne({ 'name': sharedUserName }).collation({
                 locale: 'en',
                 strength: 2
