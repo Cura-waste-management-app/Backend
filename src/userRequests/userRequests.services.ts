@@ -42,7 +42,9 @@ export class UserRequestsService {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
 
-            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: { path: 'location' } }));
+            // var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: { path: 'location' } }));
+            var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: [{ path: 'location' }, {path:'owner', select:'name avatarURL'}] }));
+
             var listings = listingsDoc.itemsRequested;
 
             //never use asyn/await with callbacks
