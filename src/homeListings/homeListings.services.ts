@@ -15,7 +15,7 @@ export class HomeListingsService {
         async getProducts(uid: ObjectId): Promise<any>{
         
             try {
-                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name');
+                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name avatarURL');
                 
                 const user = await this.userModel.findById(uid);
                 return {listings,user};
