@@ -70,7 +70,7 @@ export class UserListingsService {
         }
     }
 
-    async shareListing(listingID: ObjectId, sharedUserName: string): Promise<any> {
+    async shareListing(listingID: ObjectId, sharedUserID: ObjectId): Promise<any> {
 
         try {
             const listing = await this.listingModel.exists({ _id: listingID });
@@ -78,11 +78,8 @@ export class UserListingsService {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
 
-            const sharedUser = await this.userModel.findOne({ 'name': sharedUserName }).collation({
-                locale: 'en',
-                strength: 2
-            });
-            if (!sharedUser)
+            const sharedUser = await this.userModel.exists({_id: sharedUserID});
+            if (sharedUser == null)
                 return "User does not exists!";
 
             // console.log(sharedUserID._id);
@@ -90,7 +87,7 @@ export class UserListingsService {
                 {
                     'status': 'Pending',
                     'sharedTimeStamp': new Date(),
-                    'sharedUserID': sharedUser._id
+                    'sharedUserID': sharedUserID
                 });
 
             if (!doc) {
