@@ -3,17 +3,28 @@ import { IsNotEmpty } from "class-validator";
 export class MessageDto{
 
     @IsNotEmpty() // dto not working without validation decorators
-    senderID: String;
+    senderId: String;
 
     @IsNotEmpty()
-    receiverID: String;
-
-
-    messageContent: String;
-
-    imgURL: String;
+    receiverId: String;
     
     @IsNotEmpty()
-    timeStamp: String;
+    content : Object;
 
+    // messageContent: String;
+
+    // uri: String;
+    
+    @IsNotEmpty()
+    createdAt: Number;
+
+    // @IsNotEmpty()
+    // type: String;
+    
+    // text: String;
+
+    // size : Number;
+
+    // name : String
+    
 }
