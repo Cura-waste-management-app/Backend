@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Date } from "mongoose";
+import mongoose from "mongoose";
 import { Community } from "./community.schema";
 import { User } from "./user.schema";
 
@@ -28,6 +28,10 @@ export class Events
     
     @Prop({required: true})
     location: string;
+
+    @Prop({required: true})
+    postTime:Date;
+
 
     // @Prop({required: true})
     // timestamp: Date;

@@ -61,6 +61,8 @@ export class EventsService {
                         imgURL: dto.imgURL,
                         communityId: community,
                         creatorId: creator,
+                        postTime: new Date()
+                        
                     }
                     try{
                                 const event = await new this.eventsmodel(data).save();
@@ -457,6 +459,11 @@ export class EventsService {
           if(present)
           {
             const output = createId(communityId,userId)
+            const event = await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId))
+                 event.totalMembers = event.totalMembers -1 ;
+
+                 await event.save()
+                 
             await this.eventmembersmodel.findByIdAndUpdate(eventId, {$pull: {members: new mongoose.Types.ObjectId(userId)}})
             await this.joinedeventsmodel.findByIdAndUpdate(output,{$pull: {joinedevents: eventId } })
           }
