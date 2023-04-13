@@ -13,6 +13,8 @@ export class UserDto{
 
     emailID: string;
 
+    avatarURL: string;
+
     @IsNotEmpty()
     location: string
 
