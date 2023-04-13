@@ -45,5 +45,22 @@ export class UserService{
         }
         return user;
     }
+
+    async updateUser(dto: UserDto): Promise<any>{
+        console.log("hello");
+        const locationData = JSON.parse(dto.location);
+        const locationObj = await new this.locationModel(locationData).save();
+
+        const user = await this.userModel.findByIdAndUpdate(dto.uid, {
+            role: dto.role,
+            name: dto.name,
+            avatarURL: dto.avatarURL,
+            location: locationObj._id,
+            emailID: dto.emailID,
+            
+        });
+
+        // return user;
+    }
     
 }

@@ -19,4 +19,10 @@ export class UserController {
     async getUserInfo(@Param('userID', ObjectIdPipe) uid: ObjectId){
         return await this.userService.getUserInfo(uid);
     }
+
+    @Post('updateUser')
+    async updateUser(@Body() dto: UserDto) {
+        console.log(dto);
+        return await this.userService.updateUser(dto);
+    }
 }

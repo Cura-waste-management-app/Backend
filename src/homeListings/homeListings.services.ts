@@ -17,7 +17,8 @@ export class HomeListingsService {
             try {
                 const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name avatarURL');
                 
-                const user = await this.userModel.findById(uid);
+                const user = await this.userModel.findById(uid).populate('location');
+                console.log(user);
                 return {listings,user};
             }
             catch (err) {
