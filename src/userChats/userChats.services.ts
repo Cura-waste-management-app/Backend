@@ -61,7 +61,7 @@ export class ChatService {
     }
     async getConversationPartners(userId: ObjectId) {
         //TODO: add all validations......
-        var conversationPartners = await this.conversationPartnerModel.findById(userId);
+        var conversationPartners = await this.conversationPartnerModel.findById(userId).populate('usersList','_id name avatarURL ');
         return conversationPartners;
     }
     async addConversationPartners(userId: ObjectId, chatUser: ObjectId) {
