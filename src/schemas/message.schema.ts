@@ -11,19 +11,17 @@ export class Message {
 
     @Prop({required: true})
 
-    senderID: mongoose.Schema.Types.ObjectId;
+    senderId: mongoose.Schema.Types.ObjectId;
 
     @Prop({required: true})
-    receiverID: mongoose.Schema.Types.ObjectId;
+    receiverId: mongoose.Schema.Types.ObjectId;
 
-    @Prop()
-    messageContent: String;
+    @Prop({required: true,type: mongoose.Schema.Types.Mixed })
+    content: Object;
 
-    @Prop()
-    imgURL: String;
 
     @Prop({required: true})
-    timeStamp: String;
+    createdAt: Number;
 
 }
 

@@ -1,14 +1,15 @@
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Message, messageDocument } from "src/schemas/message.schema";
 import { ChatUser, chatUserDocument } from "src/schemas/chatUser.schema";
 import { MessageDto } from "./dto";
+import { ConversationPartner } from "src/schemas/conversationPartner.schema";
 
 @Injectable()
 export class ChatService {
     constructor(@InjectModel(Message.name) private messageModel: Model<messageDocument>,
-        @InjectModel(ChatUser.name) private chatUserModel: Model<chatUserDocument>) { }
+        @InjectModel(ChatUser.name) private chatUserModel: Model<chatUserDocument>, @InjectModel(ConversationPartner.name) private conversationPartnerModel: Model<ConversationPartner>) { }
 
     async getUserChats(chatUserID: String): Promise<any> {
 
@@ -27,10 +28,10 @@ export class ChatService {
 
             var messagesDoc = await this.messageModel.find({
                 $or: [
-                    { senderID: uid, receiverID: chatUserID },
-                    { senderID: chatUserID, receiverID: uid }
+                    { receiverId: chatUserID },
+                    { senderId: chatUserID }
                 ]
-            });
+            }).sort({ createdAt: -1 });
 
             if (!messagesDoc) {
                 throw new HttpException('No messages found', HttpStatus.NOT_FOUND);
@@ -46,17 +47,33 @@ export class ChatService {
     };
 
     async addMessage(dto: MessageDto): Promise<any> {
-    
+
         var message = {
-            senderID: dto.senderID,
-            receiverID: dto.receiverID,
-            messageContent: dto.messageContent,
-            timeStamp: dto.timeStamp,
-            imgURL: dto.imgURL
+            senderId: dto.senderId,
+            receiverId: dto.receiverId,
+            content: dto.content,
+            createdAt: dto.createdAt
+            // messageContent: dto.messageContent,
+            // timeStamp: dto.timeStamp,
+            // imgURL: dto.imgURL
         };
         await new this.messageModel(message).save();
     }
+    async getConversationPartners(userId: ObjectId) {
+        //TODO: add all validations......
+        var conversationPartners = await this.conversationPartnerModel.findById(userId).populate('usersList','_id name avatarURL ');
+        return conversationPartners;
+    }
+    async addConversationPartners(userId: ObjectId, chatUser: ObjectId) {
+        try {
+            await this.conversationPartnerModel.findByIdAndUpdate(userId, { $addToSet: { usersList: chatUser } }, { upsert: true });
+            await this.conversationPartnerModel.findByIdAndUpdate(chatUser, { $addToSet: { usersList: userId } }, { upsert: true });
 
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
 
 }
 
