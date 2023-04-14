@@ -154,7 +154,7 @@ export class EventsService {
                         joinedevents: [eventId]
                     }
 
-                    console.log('hei')
+                    console.log("output",output)
                      
                  const event = await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId))
                  event.totalMembers = event.totalMembers + 1;

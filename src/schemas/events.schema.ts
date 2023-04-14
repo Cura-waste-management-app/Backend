@@ -29,9 +29,9 @@ export class Events
     @Prop({required: true})
     location: string;
 
-    @Prop({required: true})
+    @Prop()
     postTime:Date;
-
+    
 
     // @Prop({required: true})
     // timestamp: Date;
