@@ -70,7 +70,7 @@ export class EventsController {
         
     }
 
-    @Get('leaveevent/:communityId/:userId/:eventId')
+    @Delete('leaveevent/:communityId/:userId/:eventId')
     async leaveEventByUserId(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string,
@@ -93,14 +93,13 @@ export class EventsController {
         return await this.eventsService.updateEventById(dto, eventId)
     }
 
-    @Post('deleteevent/:communityId/:userId/:eventId')
+    @Delete('deleteevent/:communityId/:userId/:eventId')
     async deleteevent(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string,
         @Param('eventId') eventId: string
 
     ) {
-
         return await this.eventsService.deleteEventById(communityId,userId,eventId)
 
         

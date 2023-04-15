@@ -131,7 +131,7 @@ export class CommunityService {
             try
             {
 
-             return await this.communityMemberModel.findById(communityId).populate('members');
+             return await this.communityMemberModel.findById(communityId).populate('members','_id name avatarURL');
              
              
                 // const comm = await this.communityMemberModel.findById(communityId);
