@@ -28,5 +28,12 @@ export class UserChatsController {
         console.log('here')
           return  this.chatService.addConversationPartners(userId,chatUser);
     }
-
+    @Post('subscribe/:groupId/:userId')
+    async subscribe(@Param('userId') userId:ObjectId,@Param('groupId') groupId:ObjectId){
+          return  this.chatService.subscribeConversation(groupId,userId);
+    }
+    @Post('unsubscribe/:groupId/:userId')
+    async unsubscribe(@Param('userId') userId:ObjectId,@Param('groupId') groupId:ObjectId){
+          return  this.chatService.unsubscribeConversation(groupId,userId);
+    }
 }

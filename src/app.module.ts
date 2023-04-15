@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { UserListingsModule } from './userListings/userListings.module';
 import { UserRequestsModule } from './userRequests/userRequests.module';
 import { HomeListingsModule } from './homeListings/homeListings.module';
-import { ChatGateway } from './chat.gateway';
+
 import { UserChatsModule } from './userChats/userChats.module';
 
 import { AuthModule } from './auth/auth.module';
@@ -36,7 +36,7 @@ import { UserModule } from './user/user.module';
 
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
