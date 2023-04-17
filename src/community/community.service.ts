@@ -21,7 +21,7 @@ export class CommunityService {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
         if(!user)
         {
-            throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);   
+            throw new HttpException(`User doesn't exist ${userId}`, HttpStatus.NOT_FOUND);   
         }
         else
         {
@@ -42,6 +42,7 @@ export class CommunityService {
         }
         
     };
+
 
 
     async getCommunitiesByCategory(category: string): Promise<any>
@@ -99,6 +100,19 @@ export class CommunityService {
                 }
                 return communities;
             }
+        }
+        catch(error)
+        {
+            console.log(error);
+            return error;
+        }
+
+     }
+     async getCommunitiesById(id:string): Promise<Community[]> 
+    {
+        try
+        {
+           return await this.communityModel.findById(id);
         }
         catch(error)
         {
