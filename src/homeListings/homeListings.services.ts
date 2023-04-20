@@ -19,6 +19,7 @@ export class HomeListingsService {
                 
                 const user = await this.userModel.findById(uid).populate('location');
                 console.log(user);
+                console.log(listings);
                 return {listings,user};
             }
             catch (err) {
@@ -26,6 +27,42 @@ export class HomeListingsService {
                 return err;
             }
     
+        }
+
+        async getUserInfo(uid: ObjectId): Promise<any> {
+            try{
+                const user = await this.userModel.findById(uid).populate('itemsListed itemsRequested');
+                var lastmonthlisted = 0;
+                var totallisted = user.itemsListed.length;
+                var totalrequested = user.itemsRequested.length;
+                var lastmonthrequested = 0;
+                
+                
+                const current = new Date();
+                
+
+                for(var i=0;i<totallisted;i++){
+                    const item = user.itemsListed[i];
+                    const timeDifference=(Math.abs(current.valueOf()-item.postTimeStamp.valueOf()));
+                    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
+                    if(days<=30){
+                        lastmonthlisted = lastmonthlisted + 1;
+                    }
+                }
+                const data = {
+                    name: user.name,
+                    img: user.avatarURL,
+                    totallisted : totallisted,
+                    lastmonthlisted: lastmonthlisted,
+                    points: user.points,
+                }
+                console.log(data);
+                return data;
+
+            }catch(err){
+                console.log(err);
+                return err;
+            }
         }
 
         // async addNewProduct(): Promise<any>{
@@ -115,11 +152,15 @@ export class HomeListingsService {
 
             if(found==="false"){
                 user.itemsRequested.push(listing._id);
+                listing.requestedUsers.push(user._id);
                 listing.requests = listing.requests + 1;
             }else{
                 user.itemsRequested = user.itemsRequested.filter((item)=>{
                     return item.toString()!==listing._id.toString();
                 });
+                listing.requestedUsers = listing.requestedUsers.filter((userji)=>{
+                    return userji.toString()!==user._id.toString();
+                })
                 listing.requests = listing.requests - 1;
             }
             await user.save();
