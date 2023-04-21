@@ -7,11 +7,15 @@ import { MessageDto } from "./dto";
 import { ConversationPartner,  ConversationPartnerDocument } from "src/schemas/conversationPartner.schema";
 import { ConversationPubSub, conversationPubSubDocument } from "src/schemas/conversation_pubsub.schema";
 import { User, userDocument } from "src/schemas/user.schema";
+import { JoinedEvents, joinedEventsDocument } from "src/schemas/joinedevents.schema";
+import { async } from "rxjs";
+import { JoinedCommunities, joinedCommunitiesDocument } from "src/schemas/joined_communities.schema";
 
 @Injectable()
 export class ChatService {
     constructor(@InjectModel(Message.name) private messageModel: Model<messageDocument>, @InjectModel(User.name) private userModel: Model<userDocument>,
-        @InjectModel(ConversationPubSub.name) private conversationPubSubModel: Model<conversationPubSubDocument>,
+        @InjectModel(ConversationPubSub.name) private conversationPubSubModel: Model<conversationPubSubDocument>, @InjectModel(JoinedEvents.name) private joinedeventsmodel: Model<joinedEventsDocument>,
+        @InjectModel(JoinedCommunities.name) private joinedCommunitiesModel: Model<joinedCommunitiesDocument>,
         @InjectModel(ChatUser.name) private chatUserModel: Model<chatUserDocument>, @InjectModel(ConversationPartner.name) private conversationPartnerModel: Model<ConversationPartnerDocument>) { }
 
     async getUserChats(chatUserID: String): Promise<any> {
@@ -65,7 +69,16 @@ export class ChatService {
     async getConversationPartners(userId: ObjectId) {
         //TODO: add all validations......
         var conversationPartners = await this.conversationPartnerModel.findById(userId).populate('usersList', '_id name avatarURL ');
-        return conversationPartners;
+        var communityList = await this.joinedCommunitiesModel.findById(userId).populate('joinedCommunities','_id name imgURL');
+        var events = await this.joinedeventsmodel.find({userId: userId}).populate('joinedevents', '_id name imgURL');
+        var eventList=events.map(item => item.joinedevents)[0];
+        console.log(eventList,communityList,conversationPartners);
+        var result = {
+            userList: conversationPartners?conversationPartners['usersList']:[],
+            communityList: communityList?communityList.joinedCommunities:[],
+            eventList: eventList?eventList:[]
+          };
+        return result;
     }
     async addConversationPartners(userId: ObjectId, chatUser: ObjectId) {
         try {

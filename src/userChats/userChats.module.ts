@@ -8,9 +8,11 @@ import { User, userSchema } from 'src/schemas/user.schema';
 import { ChatGateway } from './chat.gateway';
 import { UserChatsController } from './userChats.controller';
 import { ChatService } from './userChats.services';
+import { JoinedCommunities, JoinedCommunitiesSchema } from 'src/schemas/joined_communities.schema';
+import { JoinedEvents, JoinedEventsSchema } from 'src/schemas/joinedevents.schema';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Message.name, schema: messageSchema }, { name: ConversationPartner.name, schema: ConversationPartnerSchema }, { name: User.name, schema: userSchema }, { name: ConversationPubSub.name, schema: ConversationPubSubSchema },
+    imports: [MongooseModule.forFeature([{ name: Message.name, schema: messageSchema },{name: JoinedCommunities.name, schema:JoinedCommunitiesSchema}, {name: JoinedEvents.name, schema:JoinedEventsSchema},{ name: ConversationPartner.name, schema: ConversationPartnerSchema }, { name: User.name, schema: userSchema }, { name: ConversationPubSub.name, schema: ConversationPubSubSchema },
     { name: ChatUser.name, schema: chatUserSchema }])],
     controllers: [UserChatsController],
     providers: [ChatService, ChatGateway],
