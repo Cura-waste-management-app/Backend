@@ -88,6 +88,7 @@ export class CommunityController {
         
     }
 
+
     @Delete('deletecommunity/:communityId/:userId')
     async deleteCommunity(
         @Param('communityId') communityId: ObjectId,
@@ -102,6 +103,17 @@ export class CommunityController {
 
 
     
+
+    @Get('checkifthememberexist/:communityId/:userId')
+    async checkifthememberexist(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+    ) 
+    {
+        return await this.communityService.checkIfTheUserExistCommunity(communityId, userId)
+        
+    }
+
 
     @Get('getusersbycommunity/:communityId')
     async getusersbycommuntiy(
