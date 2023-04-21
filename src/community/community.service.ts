@@ -290,7 +290,36 @@ export class CommunityService {
 
     }
 
-    
+    async deleteCommunityById(communityId: ObjectId, userId: string): Promise<any>
+    {
+        const community = await this.communityModel.findById(communityId);
+         if (!community) {
+            throw new Error('community with id ${communityId} not found')}
+        const creator = await this.communityModel.find({_id: community._id, adminId: new mongoose.Types.ObjectId(userId)})
+
+        if(!creator)
+        {
+            throw new Error('User with id ${userId} not an admin')
+
+            
+        }
+        else
+        {
+            const members = (await this.communityMemberModel.findById(community._id)).members
+            for(var c = 0;c<members.length;c++)
+            {
+                console.log(members.at(c))
+                await this.joinedCommunitiesModel.findByIdAndUpdate( members.at(c) , {$pull: {joinedCommunities: community._id}})
+            }
+            await this.communityMemberModel.findByIdAndDelete(community._id)
+            await this.communityModel.findByIdAndDelete(community._id)
+
+        }
+            
+
+    }
+
+
 
     async addNewCommunity(dto: CommunityDto, userId: string): Promise<Community>
     {
