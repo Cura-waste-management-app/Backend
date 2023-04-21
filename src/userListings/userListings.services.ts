@@ -6,6 +6,7 @@ import { User, userDocument } from "../schemas/user.schema";
 import { ListingDto } from "./dto";
 import { Location, locationDocument } from "src/schemas/location.schema";
 import '../error_messages';
+import { database } from "firebase-admin";
 
 @Injectable()
 export class UserListingsService {
@@ -61,6 +62,10 @@ export class UserListingsService {
                 await this.userModel.findByIdAndUpdate(listing.requestedUsers[i], { $pull: { itemsRequested: listingID } });
             }
 
+            const listingObj = await this.listingModel.findById(listingID, 'location');
+            // delete location object from location collection
+            await this.locationModel.deleteOne({_id: listingObj.location});
+
             // remove listing from the listing collection
             await this.listingModel.deleteOne({ _id: listingID });
         }
@@ -105,7 +110,7 @@ export class UserListingsService {
     }
 
     async addListing(dto: ListingDto): Promise<any> {
-
+            
         const locationData = JSON.parse(dto.location);
         const locationObj = await new this.locationModel(locationData).save();
 
@@ -126,6 +131,39 @@ export class UserListingsService {
             const listing = await new this.listingModel(data).save();
 
             await this.userModel.findByIdAndUpdate(dto.ownerID, { $push: { itemsListed: listing._id } });
+
+        }
+        catch (err) {
+            console.log(err);
+            return err;
+        }
+
+    }
+
+    async updateListing(dto: ListingDto): Promise<any> {
+        
+        // delete prev location
+        const listingID = dto.listingID;
+        const listingObj = await this.listingModel.findById(listingID, 'location');
+        await this.locationModel.deleteOne({_id: listingObj.location});
+
+        // add new location
+        const locationData = JSON.parse(dto.location);
+        const locationObj = await new this.locationModel(locationData).save();
+
+
+        // update listing
+        const data = {
+            'title': dto.title,
+            'description': dto.description,
+            'category': dto.category,
+            'location': locationObj._id,
+            'imagePath': dto.imagePath
+        }
+        // console.log(data);
+
+        try {
+            const listing = await this.listingModel.updateOne({ _id: listingID }, data);
 
         }
         catch (err) {

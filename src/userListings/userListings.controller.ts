@@ -32,6 +32,12 @@ export class UserListingsController {
         return await this.listingsService.addListing(dto);
     }
 
+    @Post('updateListing')
+    async updateListing(
+        @Body() dto: ListingDto) {
+        return await this.listingsService.updateListing(dto);
+    }
+
     @Post('create')
     async create() {
         await this.listingsService.create();
