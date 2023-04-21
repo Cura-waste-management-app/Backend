@@ -22,7 +22,7 @@ export class Community
     location: string;
 
     @Prop({default: 0})
-    totalParticipant: Number;
+    totalParticipant: number;
 
 
     @Prop({ required: true })

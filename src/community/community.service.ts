@@ -21,8 +21,7 @@ export class CommunityService {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
         if(!user)
         {
-            throw new HttpException(`User doesn't exist ${userId}`, HttpStatus.NOT_FOUND);   
-        }
+            throw new HttpException(`User doesn't exist ${userId}`, HttpStatus.NOT_FOUND);        }
         else
         {
             const communityDoc = await this.joinedCommunitiesModel.findById(new mongoose.Types.ObjectId(userId)).populate('joinedCommunities');
@@ -43,7 +42,19 @@ export class CommunityService {
         
     };
 
+    async getCommunitiesById(id:string): Promise<Community[]> 
+    {
+        try
+        {
+           return await this.communityModel.findById(id);
+        }
+        catch(error)
+        {
+            console.log(error);
+            return error;
+        }
 
+     }
 
     async getCommunitiesByCategory(category: string): Promise<any>
     {
@@ -108,19 +119,7 @@ export class CommunityService {
         }
 
      }
-     async getCommunitiesById(id:string): Promise<Community[]> 
-    {
-        try
-        {
-           return await this.communityModel.findById(id);
-        }
-        catch(error)
-        {
-            console.log(error);
-            return error;
-        }
-
-     }
+     
 
      
     
@@ -207,6 +206,10 @@ export class CommunityService {
                 _id: userId,
                 joinedCommunities: [communityId]
               }
+              const community = await this.communityModel.findById(communityId);
+              community.totalParticipant = community.totalParticipant + 1;
+              await community.save()
+
               const d1 = await this.communityMemberModel.findByIdAndUpdate(communityId, {$push: {members: userId}})
               console.log(d1);
 
@@ -217,7 +220,7 @@ export class CommunityService {
               else
               {
 
-                await this.communityMemberModel.findByIdAndUpdate(communityId, {$push:{members: new mongoose.Types.ObjectId(userId)}})
+                // await this.communityMemberModel.findByIdAndUpdate(communityId, {$push:{members: new mongoose.Types.ObjectId(userId)}})
                 
 
                 return (await this.joinedCommunitiesModel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), {$push: {joinedCommunities: community._id}}));
@@ -243,6 +246,51 @@ export class CommunityService {
 
 
     };
+    async checkIfTheUserExistCommunity(communityId: ObjectId, userId: string) {
+        const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
+        console.log(user);
+        const community = await this.communityModel.findById(communityId);
+        console.log(community);
+        if (!user) {
+            throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);
+        }
+
+        if (!community) {
+            throw new HttpException('The community does not exist', HttpStatus.NOT_FOUND);
+
+        }
+       
+        const member = await this.communityMemberModel.find({ _id: communityId, members: { $in: [user._id] } })
+        var present = true
+        if (!member) {
+            // throw new Error('User with id ${creatorId} has not joined the community ${communityId}')
+            present = false;
+        }
+
+        return present;
+
+
+    }
+
+    async leaveCommunity(communityId: ObjectId, userId: string): Promise<any> {
+        const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
+
+        var present = this.checkIfTheUserExistCommunity(communityId, userId);
+        if (present) {
+            // const output = createId(communityId, userId)
+            // const output = userId + communityId;
+            await this.communityModel.findByIdAndUpdate(communityId,{$inc:{totalParticipant :-1}})
+            await this.communityMemberModel.findByIdAndUpdate(communityId, { $pull: { members: new mongoose.Types.ObjectId(userId) } })
+            await this.joinedCommunitiesModel.findOneAndUpdate( user._id , { $pull: { joinedCommunities: communityId }} )
+        }
+        else {
+            throw new Error('User with id ${userId} dosent exist')
+
+        }
+
+    }
+
+    
 
     async addNewCommunity(dto: CommunityDto, userId: string): Promise<Community>
     {
@@ -262,6 +310,7 @@ export class CommunityService {
             description: dto.description,
             category: dto.category,
             location: dto.location,
+            totalParticipant: 1,
             adminId: admin,
             imgURL: dto.imgURL,
             
@@ -275,7 +324,23 @@ export class CommunityService {
                 members: [admin._id]
                 
             }
+
+            const data2 = {
+                _id: admin._id,
+                community: [community._id]
+            }
             await new this.communityMemberModel(data1).save()
+            const user_exist = await this.joinedCommunitiesModel.exists({_id: new mongoose.Types.ObjectId(userId)})
+            if(user_exist == null )
+            {
+                await new this.joinedCommunitiesModel(data2).save()
+            }
+            else
+            {
+                await this.joinedCommunitiesModel.findOneAndUpdate({_id: admin._id}, {$push:{ joinedCommunities: community._id}})
+
+            }
+
             return community;
             
             
