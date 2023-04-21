@@ -25,7 +25,6 @@ export class UserService{
             return "Username already exists! Please try another username";
         }
         const userData = {
-            _id: new mongoose.Types.ObjectId(dto.uid),
             name: dto.name,
             role: dto.role,
             emailID: dto.emailID,

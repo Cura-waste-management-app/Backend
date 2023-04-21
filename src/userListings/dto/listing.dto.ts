@@ -3,6 +3,8 @@ import {IsNotEmpty} from 'class-validator';
 
 export class ListingDto{
 
+    listingID: string;
+    
     @IsNotEmpty()
     ownerID: string;
 
