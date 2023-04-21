@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param,Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Param,Get, Query, Delete } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { CommunityDto } from './dto/community.dto';
 import { ObjectId } from 'mongoose';
@@ -45,12 +45,20 @@ export class CommunityController {
 
     }
 
-    @Get('getcommunitybyid/:userId')
-    async getCommunityById(
+    @Get('getcommunitybyuserid/:userId')
+    async getCommunityByUserId(
         @Param('userId') userId: string
     )
     {
         return await this.communityService.getCommunitiesByUserId(userId);
+    }
+
+    @Get('getcommunitybyid/:id')
+    async getCommunityById(
+        @Param('id') id: string
+    )
+    {
+        return await this.communityService.getCommunitiesById(id);
     }
 
     @Get('getcommunitybycategory/:category')
@@ -68,6 +76,18 @@ export class CommunityController {
     {
         return await this.communityService.getCommunitiesByName(name);
     }
+
+    @Delete('leavecommunity/:communityId/:userId')
+    async leaveEventByUserId(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string,
+   
+    ) 
+    {
+        return await this.communityService.leaveCommunity(communityId, userId);
+        
+    }
+
 
 
     
