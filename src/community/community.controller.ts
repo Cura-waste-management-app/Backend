@@ -88,6 +88,17 @@ export class CommunityController {
         
     }
 
+    @Delete('deletecommunity/:communityId/:userId')
+    async deleteCommunity(
+        @Param('communityId') communityId: ObjectId,
+        @Param('userId') userId: string
+
+    ) {
+        return await this.communityService.deleteCommunityById(communityId, userId)
+
+        
+    }
+
 
 
     

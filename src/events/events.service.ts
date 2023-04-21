@@ -251,7 +251,7 @@ export class EventsService {
         // const ouput = createId(communityId, userId);
 
         const output = userId + communityId;
-        const allevents = (await this.communityModel.findById(communityId).populate('events'));
+        const allevents = (await this.communityModel.findById(communityId).populate({path: 'events', populate:{path:'creatorId', select: '_id name avatarURL'}}));
 
 
         var myevents = await this.getMyEvents(communityId, userId);
