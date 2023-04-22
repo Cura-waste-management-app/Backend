@@ -25,8 +25,8 @@ export class UserListingsService {
             var listingsDoc = (await this.userModel.findById(uid).populate({
                 path: 'itemsListed',
                 populate: [{ path: 'location' },
-                { path: 'owner', select: 'name avatarURL points itemsReceived itemsShared' },
-                { path: 'requestedUsers', select: 'name avatarURL points itemsReceived itemsShared' }]
+                { path: 'owner', select: 'name' },
+                { path: 'requestedUsers', select: 'name avatarURL points' }]
             }));
             var listings = listingsDoc.itemsListed;
 
