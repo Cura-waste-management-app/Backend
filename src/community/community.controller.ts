@@ -100,6 +100,12 @@ export class CommunityController {
         
     }
 
+    @Post('updatecommunity/:communityId')
+    async updateUser( @Param('communityId') communityId: ObjectId,@Body() dto: CommunityDto) {
+        console.log(dto);
+        return await this.communityService.updateCommunity(communityId,dto);
+    }
+
 
 
     

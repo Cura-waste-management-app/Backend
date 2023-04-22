@@ -319,6 +319,32 @@ export class CommunityService {
 
     }
 
+    async updateCommunity(communityId: ObjectId, dto: CommunityDto): Promise<any> {
+        const community = await this.communityModel.findById(communityId);
+         if (!community) {
+            throw new Error('community with id ${communityId} not found')}
+
+        else
+        {
+            try{
+                await this.communityModel.findByIdAndUpdate(communityId, {
+                    name: dto.name,
+                    description: dto.description,
+                    category: dto.category,
+                    location: dto.location,
+                    imgURL: dto.imgURL
+                })
+
+            }
+            catch(e)
+            {
+
+                console.log(e);
+                return e;
+            }
+        }
+        
+    }
 
 
     async addNewCommunity(dto: CommunityDto, userId: string): Promise<Community>
