@@ -6,7 +6,6 @@ import { User, userDocument } from "src/schemas/user.schema";
 import { UserDto } from "./dto";
 import { UCI, uciDocument } from "src/schemas/uciCode.schema";
 
-
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<userDocument>,
