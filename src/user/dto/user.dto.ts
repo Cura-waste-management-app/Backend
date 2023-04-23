@@ -2,7 +2,6 @@ import {IsNotEmpty} from 'class-validator';
 
 export class UserDto{
 
-    @IsNotEmpty()
     uid: string;
 
     @IsNotEmpty()
@@ -14,6 +13,8 @@ export class UserDto{
     emailID: string;
 
     avatarURL: string;
+
+    uciCode: string;
 
     @IsNotEmpty()
     location: string
