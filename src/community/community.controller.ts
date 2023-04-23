@@ -2,6 +2,7 @@ import { Controller, Post, Body, Param,Get, Query, Delete } from '@nestjs/common
 import { CommunityService } from './community.service';
 import { CommunityDto } from './dto/community.dto';
 import { ObjectId } from 'mongoose';
+import { ObjectIdPipe } from 'src/pipes/object-id.pipe';
 
     
 @Controller('community')
@@ -25,12 +26,11 @@ export class CommunityController {
 
         }
 
-    @Get('allcommunities')
+    @Get('allcommunities/:userId')
 
-    async getCommunities(@Query('offset') offset = 0, @Query('limit') limit = 10) {
-        return this.communityService.getallCommunities(offset,limit);
-
-        
+    async getCommunities( @Param('userId', ObjectIdPipe) userId: ObjectId, @Query('offset') offset = 0, @Query('limit') limit = 10) {
+        return this.communityService.getallCommunities(userId, offset, limit);
+     
     }
 
     @Post('joincommunity/:userId/:communityId')

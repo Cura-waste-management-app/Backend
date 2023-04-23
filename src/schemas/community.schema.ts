@@ -44,9 +44,8 @@ export class Community
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
     adminId : User
 
-
-
-
+    @Prop({required: true})
+    type: string
 
 }
 
