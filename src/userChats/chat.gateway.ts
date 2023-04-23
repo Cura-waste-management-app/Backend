@@ -50,7 +50,7 @@ export class ChatGateway {
         console.log("sending message to ", message['receiverId']);
         var url = `chat/${message['receiverId']}`;
 
-        // this.socket.emit(url, JSON.stringify(message));
+        this.socket.emit(url, JSON.stringify(message));
     }
 
    
