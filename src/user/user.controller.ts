@@ -11,7 +11,6 @@ export class UserController {
 
     @Post('addUser')
     async addUser(@Body() dto: UserDto) {
-        console.log(dto);
         return await this.userService.addUser(dto);
     }
 
@@ -24,5 +23,11 @@ export class UserController {
     async updateUser(@Body() dto: UserDto) {
         console.log(dto);
         return await this.userService.updateUser(dto);
+    }
+
+    @Post('addUci')
+    async addUCI(@Body() args: Object)
+    {
+        return await this.userService.addUCI(args['name']);
     }
 }
