@@ -325,15 +325,15 @@ export class EventsService {
 
         const community = await this.communityMemberModel.findById(communityId);
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-
-        console.log(community);
+    console.log('eventId ',eventId)
+        // console.log(community);
         const creator = await this.userModel.findById(user_id);
-        console.log(creator);
+        // console.log(creator);
 
 
         const create = await this.communityMemberModel.find({ _id: communityId, members: { $in: [creator._id] } })
-        console.log("hei")
-        console.log(create)
+        
+        // console.log(create)
 
         if (!community) {
             throw new Error('community with id ${communityId} not found')
@@ -349,7 +349,7 @@ export class EventsService {
         }
 
         const eventCheck = await this.communityModel.find({ events: { $in: [event._id] } })
-        console.log("hei again")
+        
         console.log(eventCheck)
 
         if (!eventCheck) {
@@ -363,16 +363,16 @@ export class EventsService {
 
             for (var e = 0; e < event_members.length; e++) {
                 console.log(event_members.at(e));
-                const output = communityId+ String(event_members.at(e));
-                console.log(output)
+                const output =  String(event_members.at(e))+communityId;
+                console.log('output ',output)
                 await this.joinedeventsmodel.findOneAndUpdate({uniqueId:output}, { $pull: { joinedevents: event._id } })
-                console.log("ji ji")
+                console.log("delete from joined event succesfull")
             }
-            console.log("ji ji ji")
+            console.log("deleting event members")
             await this.eventmembersmodel.findByIdAndDelete(event._id)
-            console.log("ji ji ji")
+            console.log("deleteing from community model")
             await this.communityModel.findByIdAndUpdate(community._id, { $pull: { events: event._id } })
-            console.log("ji ji ji ji")
+            console.log("deleting event model")
             await this.eventsmodel.findByIdAndDelete(event._id)
         }
 

@@ -6,11 +6,14 @@ import { User, userDocument } from 'src/schemas/user.schema';
 import { CommunityDto } from './dto/community.dto';
 import { CommunityMember, CommunityMemberDocument } from 'src/schemas/community_members.schema';
 import { JoinedCommunities, joinedCommunitiesDocument } from 'src/schemas/joined_communities.schema';
+import { Events, eventDocument } from 'src/schemas/events.schema';
+import { EventsService } from 'src/events/events.service';
+import { EventMembers, eventMembersDocument } from 'src/schemas/eventMembers.schema';
 
 @Injectable()
 export class CommunityService {
-    constructor(@InjectModel(Community.name) private communityModel: Model<communityDocument>, @InjectModel(User.name) private userModel: Model<userDocument>,
-        @InjectModel(CommunityMember.name) private communityMemberModel: Model<CommunityMemberDocument>, @InjectModel(JoinedCommunities.name) private joinedCommunitiesModel: Model<joinedCommunitiesDocument>) { }
+    constructor(@InjectModel(Community.name) private communityModel: Model<communityDocument>, private eventService: EventsService, @InjectModel(User.name) private userModel: Model<userDocument>, @InjectModel(Events.name) private eventsModel : Model<eventDocument>,
+        @InjectModel(CommunityMember.name) private communityMemberModel: Model<CommunityMemberDocument>, @InjectModel(JoinedCommunities.name) private joinedCommunitiesModel: Model<joinedCommunitiesDocument>, @InjectModel(EventMembers.name) private eventMembersModel: Model<eventMembersDocument>) { }
 
 
 
@@ -262,7 +265,18 @@ export class CommunityService {
 
         }
         else {
+
             const members = (await this.communityMemberModel.findById(community._id)).members
+            const events =  (await this.communityModel.findById(community._id)).events
+
+            console.log(events);
+            events.forEach(async (event)=>
+                await this.eventService.deleteEventById(communityId,userId,event.toString())
+            )
+            // for (var c = 0; c < events.length; c++) {
+            //     this.eventService.deleteEventById(communityId,userId,events.at(c));
+            // }
+
             for (var c = 0; c < members.length; c++) {
                 console.log(members.at(c))
                 await this.joinedCommunitiesModel.findByIdAndUpdate(members.at(c), { $pull: { joinedCommunities: community._id } })
