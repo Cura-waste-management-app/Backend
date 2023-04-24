@@ -15,9 +15,18 @@ export class HomeListingsService {
         async getProducts(uid: ObjectId): Promise<any>{
         
             try {
-                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name avatarURL');
-                
+                // throw new HttpException('No user found', HttpStatus.NOT_FOUND);
                 const user = await this.userModel.findById(uid).populate('location');
+                if(!user){
+                    throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+                }
+
+                const listings = await this.listingModel.find({status: "Active", owner: {$ne: uid}}).populate('location').populate('owner', 'name avatarURL');
+                if(!listings){
+                    throw new HttpException('No listings found for user', HttpStatus.NOT_FOUND);
+                }
+                
+                
                 console.log(user);
                 console.log(listings);
                 return {listings,user};
@@ -31,7 +40,12 @@ export class HomeListingsService {
 
         async getUserInfo(uid: ObjectId): Promise<any> {
             try{
+                // throw new HttpException('No user found', 404);
                 const user = await this.userModel.findById(uid).populate('itemsListed itemsRequested');
+                
+                if(!user){
+                    throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+                }
                 var lastmonthlisted = 0;
                 var totallisted = user.itemsListed.length;
                 var totalrequested = user.itemsRequested.length;
@@ -60,6 +74,7 @@ export class HomeListingsService {
                 return data;
 
             }catch(err){
+                console.log("Ye toh err nhi?");
                 console.log(err);
                 return err;
             }
@@ -102,9 +117,15 @@ export class HomeListingsService {
 
         try {
             var found = "false";
-
-            const listing = await this.listingModel.findById(listingID);
             const user = await this.userModel.findById(uid);
+            if(!user){
+                throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+            }
+            const listing = await this.listingModel.findById(listingID);
+            if(!listing){
+                throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
+            }
+            
             user.itemsLiked.map((item) => {
                 if (item.toString() == listing._id.toString()) {
 
@@ -141,9 +162,15 @@ export class HomeListingsService {
         
         try{
             var found = "false";
-            
-            const listing = await this.listingModel.findById(listingID);
             const user = await this.userModel.findById(uid);
+            if(!user){
+                throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+            }
+            const listing = await this.listingModel.findById(listingID);
+            if(!listing){
+                throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
+            }
+            
             user.itemsRequested.map((item)=>{
                 if(item.toString()==listing._id.toString()){
                     found = "true";
