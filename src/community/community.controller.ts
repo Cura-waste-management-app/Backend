@@ -99,10 +99,13 @@ export class CommunityController {
         
     }
 
-    @Post('updatecommunity/:communityId')
-    async updateUser( @Param('communityId') communityId: ObjectId,@Body() dto: CommunityDto) {
+    @Post('updatecommunity/:communityId/:userId')
+    async updateUser( 
+    @Param('communityId') communityId: ObjectId,
+    @Param('userId') userId: string,
+    @Body() dto: CommunityDto) {
         console.log(dto);
-        return await this.communityService.updateCommunity(communityId,dto);
+        return await this.communityService.updateCommunity(communityId,dto,userId);
     }
 
 
