@@ -13,19 +13,23 @@ export class CommunityService {
         @InjectModel(CommunityMember.name) private communityMemberModel: Model<CommunityMemberDocument>, @InjectModel(JoinedCommunities.name) private joinedCommunitiesModel: Model<joinedCommunitiesDocument>) { }
 
 
-    async getCommunitiesByUserId(userId: string): Promise<any> {
-        try {
 
-            const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
-            if (!user) {
-                throw new HttpException(`User doesn't exist ${userId}`, HttpStatus.NOT_FOUND);
-            }
-            else {
-                const communityDoc = await this.joinedCommunitiesModel.findById(new mongoose.Types.ObjectId(userId));
-              
-                return communityDoc;
+    async getCommunitiesByUserId(userId: string): Promise<any>
+    {
+        try{
+            
+        const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
+        if(!user)
+        {
+            throw new HttpException(`User doesn't exist ${userId}`, HttpStatus.NOT_FOUND);}
+        else
+        {
+            const communityDoc = await this.joinedCommunitiesModel.findById(new mongoose.Types.ObjectId(userId)).populate('joinedCommunities');
+            return communityDoc;
 
-            }
+        }
+
+    
 
         }
         catch (error) {
@@ -36,9 +40,12 @@ export class CommunityService {
 
     };
 
+
+ 
     async getCommunitiesById(id: string): Promise<Community[]> {
         try {
             return (await this.communityModel.findById(id));
+
         }
         catch (error) {
             console.log(error);
@@ -268,11 +275,20 @@ export class CommunityService {
 
     }
 
-    async updateCommunity(communityId: ObjectId, dto: CommunityDto): Promise<any> {
+    async updateCommunity(communityId: ObjectId, dto: CommunityDto, userId: string): Promise<any> {
         const community = await this.communityModel.findById(communityId);
-        if (!community) {
-            throw new Error('community with id ${communityId} not found')
-        }
+
+         if (!community) {
+            throw new Error('community with id ${communityId} not found')}
+            
+        const creator = await this.communityModel.find({_id: community._id, adminId: new mongoose.Types.ObjectId(userId)})
+
+            if(!creator)
+            {
+                throw new Error('User with id ${userId} not an admin')
+    
+                
+            }
 
         else {
             try {
