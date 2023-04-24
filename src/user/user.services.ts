@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, ObjectId } from "mongoose";
 import { Location, locationDocument } from "src/schemas/location.schema";
@@ -60,8 +60,14 @@ export class UserService {
 
     async updateUser(dto: UserDto): Promise<any> {
         console.log("hello");
+        try{
+
+        
         const locationData = JSON.parse(dto.location);
         const locationObj = await new this.locationModel(locationData).save();
+        if(!locationObj){
+            throw new HttpException('No location found', HttpStatus.NOT_FOUND);
+        }
 
         const user = await this.userModel.findByIdAndUpdate(dto.uid, {
             role: dto.role,
@@ -71,8 +77,16 @@ export class UserService {
             emailID: dto.emailID,
 
         });
+        if(!user){
+            throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+        }
 
-        // return user;
+            return user;
+        }catch(err){
+            console.log(err);
+            return err;
+
+        }
     }
 
     async addUCI(name: string)
