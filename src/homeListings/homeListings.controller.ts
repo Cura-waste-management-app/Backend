@@ -25,6 +25,11 @@ export class HomeListingsController {
         return await this.listingsService.toggleRequestStatus(listingID, uid);
     }
 
+    @Get('ownerinfo/:userID')
+    async getUserInfo(@Param('userID', ObjectIdPipe) uid: ObjectId) {
+        return await this.listingsService.getUserInfo(uid);
+    }
+
 
     
 

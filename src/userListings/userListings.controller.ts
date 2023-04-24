@@ -21,15 +21,21 @@ export class UserListingsController {
 
     @Post('shareListing')
     async shareListing(@Body('listingID', ObjectIdPipe) listingID: ObjectId,
-        @Body('sharedUserName') sharedUserName: string) {
+        @Body('sharedUserID',  ObjectIdPipe) sharedUserID: ObjectId) {
             
-        return await this.listingsService.shareListing(listingID, sharedUserName);
+        return await this.listingsService.shareListing(listingID, sharedUserID);
     }
 
     @Post('addListing')
     async addListing(
         @Body() dto: ListingDto) {
         return await this.listingsService.addListing(dto);
+    }
+
+    @Post('updateListing')
+    async updateListing(
+        @Body() dto: ListingDto) {
+        return await this.listingsService.updateListing(dto);
     }
 
     @Post('create')

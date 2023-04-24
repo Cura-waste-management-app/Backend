@@ -47,8 +47,8 @@ export class UserRequestsService {
                 {
                     path: 'itemsRequested',
                     populate: [{ path: 'location' },
-                    { path: 'owner', select: 'name avatarURL points itemsReceived itemsShared' },
-                    { path: 'requestedUsers', select: 'name avatarURL points itemsReceived itemsShared' }]
+                    { path: 'owner', select: 'name avatarURL points' },
+                    { path: 'requestedUsers', select: 'name' }]
                 }));
 
             var listings = listingsDoc.itemsRequested;
@@ -80,6 +80,9 @@ export class UserRequestsService {
             }
 
             await this.listingModel.findByIdAndUpdate(listingID, { $pull: { requestedUsers: uid } });
+            const listing2 = await this.listingModel.findById(listingID);
+            listing2.requests = listing2.requests - 1;
+            await listing2.save();
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsRequested: listingID } });
             if (!doc) {
                 throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
