@@ -38,6 +38,20 @@ export class HomeListingsService {
     
         }
 
+        async getProfile(uid: ObjectId): Promise<any>{
+            try{
+                // throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+                const user = await this.userModel.findById(uid).populate('location');
+                if(!user){
+                    throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+                }
+                return {user};
+            }catch(err){
+                console.log(err);
+                return err;
+            }
+        }
+
         async getUserInfo(uid: ObjectId): Promise<any> {
             try{
                 // throw new HttpException('No user found', 404);
@@ -116,6 +130,7 @@ export class HomeListingsService {
     async toggleLikeStatus(listingID: ObjectId, uid: ObjectId): Promise<any> {
 
         try {
+            // throw new HttpException('Listing is no more active', HttpStatus.FORBIDDEN);
             var found = "false";
             const user = await this.userModel.findById(uid);
             if(!user){
@@ -124,6 +139,11 @@ export class HomeListingsService {
             const listing = await this.listingModel.findById(listingID);
             if(!listing){
                 throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
+            }
+            console.log("Listing ka status");
+            console.log(listing.status=='Active');
+            if(listing.status!='Active'){
+                throw new HttpException('Listing is no more active', HttpStatus.NOT_FOUND);
             }
             
             user.itemsLiked.map((item) => {
@@ -161,6 +181,7 @@ export class HomeListingsService {
     async toggleRequestStatus(listingID: ObjectId, uid: ObjectId): Promise<any>{
         
         try{
+            // throw new HttpException('Listing is no more active', HttpStatus.NOT_FOUND);
             var found = "false";
             const user = await this.userModel.findById(uid);
             if(!user){
@@ -169,6 +190,12 @@ export class HomeListingsService {
             const listing = await this.listingModel.findById(listingID);
             if(!listing){
                 throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
+            }
+
+            console.log("Listing ka status");
+            console.log(listing.status=='Active');
+            if(listing.status!='Active'){
+                throw new HttpException('Listing is no more active', HttpStatus.NOT_FOUND);
             }
             
             user.itemsRequested.map((item)=>{
