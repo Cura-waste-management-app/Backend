@@ -13,6 +13,11 @@ export class HomeListingsController {
         return await this.listingsService.getProducts(uid);
     }
 
+    @Get('myprofile/:userID')
+    async getProfile(@Param('userID', ObjectIdPipe) uid: ObjectId){
+        return await this.listingsService.getProfile(uid);
+    }
+
     @Post('toggleLikeStatus')
     async toggleLikeStatus(@Body('listingID', ObjectIdPipe) listingID: ObjectId,
         @Body('userID', ObjectIdPipe) uid: ObjectId) {
