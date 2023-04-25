@@ -12,10 +12,11 @@ import { EventsService } from 'src/events/events.service';
 import { EventsModule } from 'src/events/events.module';
 import { EventMembers, EventMembersSchema } from 'src/schemas/eventMembers.schema';
 import { JoinedEvents, JoinedEventsSchema } from 'src/schemas/joinedevents.schema';
+import { ConversationPubSub, ConversationPubSubSchema } from 'src/schemas/conversation_pubsub.schema';
 
 @Module({
   imports:  [EventsModule, MongooseModule.forFeature([{name: Community.name, schema:CommunitySchema }, {name: User.name, schema: userSchema}, {name : Events.name , schema: EventsSchema},
-  {name: JoinedCommunities.name, schema: JoinedCommunitiesSchema}, {name: JoinedEvents.name, schema:JoinedEventsSchema },{name: CommunityMember.name , schema: CommunityMemberSchema},{name: EventMembers.name,schema: EventMembersSchema}])],
+  {name: JoinedCommunities.name, schema: JoinedCommunitiesSchema},{ name: ConversationPubSub.name, schema: ConversationPubSubSchema }, {name: JoinedEvents.name, schema:JoinedEventsSchema },{name: CommunityMember.name , schema: CommunityMemberSchema},{name: EventMembers.name,schema: EventMembersSchema}])],
   providers: [CommunityService,EventsService],
   controllers: [CommunityController]
 })
