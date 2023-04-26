@@ -5,8 +5,7 @@ import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
 import { ListingDto } from "./dto";
 import { Location, locationDocument } from "src/schemas/location.schema";
-import '../error_messages';
-import { database } from "firebase-admin";
+import { listingError, userError } from "src/error_messages";
 
 @Injectable()
 export class UserListingsService {
@@ -17,25 +16,20 @@ export class UserListingsService {
     async getListings(uid: ObjectId): Promise<any> {
 
         try {
-            console.log(uid);
+            // console.log(uid);
             const user = await this.userModel.exists({ _id: uid });
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
             var listingsDoc = (await this.userModel.findById(uid).populate({
-                path: 'itemsListed',
+                path: 'itemsListed', 
                 populate: [{ path: 'location' },
                 { path: 'owner', select: 'name' },
                 { path: 'requestedUsers', select: 'name avatarURL points' }]
             }));
-            var listings = listingsDoc.itemsListed;
-
-            //never use asyn/await with callbacks
-            if (!listings)
-                throw new HttpException('The user have not listed anything yet!', HttpStatus.NOT_FOUND);
-            else {
-                return listings;
-            }
+            var listings = listingsDoc.itemsListed;        
+            return listings;
+            
         }
         catch (error) {
             console.log(error);
