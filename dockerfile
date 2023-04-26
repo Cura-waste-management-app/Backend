@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16 as development
 WORKDIR /cura/src/app
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -12,9 +12,19 @@ RUN npm install
 # Bundle app source
 COPY . .
 RUN npm run build 
+FROM node:16 as production 
 
-ARG PORT=8080
-ENV PORT=$PORT
-EXPOSE $PORT
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=prod
+
+COPY . .
+
+COPY --from=development /cura/src/app/dist ./dist
+    
 CMD ["node", "dist/main.js"]
