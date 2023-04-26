@@ -19,6 +19,11 @@ export class UserController {
         return await this.userService.getUserInfo(uid);
     }
 
+    @Get('getMongooseUID/:firebaseUID')
+    async getMongooseUID(@Param('firebaseUID') firebaseUID: string){
+        return await this.userService.getMongooseUID(firebaseUID);
+    }
+
     @Post('updateUser')
     async updateUser(@Body() dto: UserDto) {
         console.log(dto);
