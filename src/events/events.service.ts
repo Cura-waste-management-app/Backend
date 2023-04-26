@@ -26,7 +26,7 @@ export class EventsService {
         console.log(creator);
 
 
-        const isMemberExistInCommunity = await this.communityMemberModel.find({ _id: communityId, members: { $in: [creator._id] } })
+        const isMemberExistInCommunity = await this.communityMemberModel.findOne({ _id: communityId, members: { $in: [creator._id] } })
         console.log("hei")
         console.log(isMemberExistInCommunity)
 
@@ -76,6 +76,7 @@ export class EventsService {
                     members: [creator._id]
                 }
                 await new this.eventmembersmodel(data1).save()
+                // await this.joinedeventsmodel.findOneAndUpdate({uniqueId: output}, { $push: { joinedevents: event._id } },{upsert: true});
                 if (user_exist == null) {
                     await new this.joinedeventsmodel(data2).save()
 
@@ -111,7 +112,7 @@ export class EventsService {
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
         console.log(event)
-        const eventCheck = await this.communityModel.find({ _id: communityId, events: { $in: [event._id] } })
+        const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
         }
@@ -137,11 +138,11 @@ export class EventsService {
                 //     console.log(output_str)
 
                 //     const output = new mongoose.Types.ObjectId(output_str) 
-                // const data = {
-                //     uniqueId: output,
-                //     userId:userId,
-                //     joinedevents: [eventId]
-                // }
+                const data = {
+                    uniqueId: output,
+                    userId:userId,
+                    joinedevents: [eventId]
+                }
 
                 console.log("output", output)
 
@@ -156,16 +157,16 @@ export class EventsService {
 
                 await this.conversationPubSubModel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), { $addToSet: { subscribers: userId } }, { upsert: true }); 
                 await this.eventmembersmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), { $push: { members: user._id } })
-                await this.joinedeventsmodel.findOneAndUpdate({unqiqueId:output}, { $push: { joinedevents: event._id } },{upsert: true});
-                // const newuser = await this.joinedeventsmodel.findOne({uniqueId:output})
-                // if (!newuser) {
-                //     await new this.joinedeventsmodel(data).save();
-                // }
-                // else {
+                // await this.joinedeventsmodel.findOneAndUpdate({unqiqueId:output}, { $push: { joinedevents: event._id } },{upsert: true});
+                const newuser = await this.joinedeventsmodel.findOne({uniqueId:output})
+                if (!newuser) {
+                    await new this.joinedeventsmodel(data).save();
+                }
+                else {
 
-                //     return await this.joinedeventsmodel.findOneAndUpdate({unqiqueId:output}, { $push: { joinedevents: event._id } })
+                    return await this.joinedeventsmodel.findOneAndUpdate({unqiqueId:output}, { $push: { joinedevents: event._id } })
 
-                // }
+                }
                 
 
 
@@ -331,14 +332,17 @@ export class EventsService {
 
         const community = await this.communityMemberModel.findById(communityId);
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-    console.log('eventId ',eventId)
+        console.log('eventId ',eventId)
         // console.log(community);
         const creator = await this.userModel.findById(user_id);
         // console.log(creator);
 
 
-        const isMemberExistInCommunity = await this.communityMemberModel.find({ _id: communityId, members: { $in: [creator._id] } })
+        const isMemberExistInCommunity = await this.communityMemberModel.findOne({ _id: communityId, members: { $in: [creator._id] } })
         
+        if(event && event.creatorId._id.toString()!=userId){
+            throw new Error(`User is not the admin of the event`)
+        }
         // console.log(isMemberExistInCommunity)
 
         if (!community) {
@@ -354,7 +358,7 @@ export class EventsService {
             throw new Error(`User with id ${userId} has not joined the community ${communityId}`)
         }
 
-        const eventCheck = await this.communityModel.find({ events: { $in: [event._id] } })
+        const eventCheck = await this.communityModel.findOne({ events: { $in: [event._id] } })
         
         console.log(eventCheck)
 
@@ -401,14 +405,14 @@ export class EventsService {
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
         console.log(event)
-        const eventCheck = await this.communityModel.find({ _id: communityId, events: { $in: [event._id] } })
+        const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
         }
 
-        const member = await this.communityMemberModel.find({ _id: communityId, members: { $in: [user._id] } })
+        const member = await this.communityMemberModel.findOne({ _id: communityId, members: { $in: [user._id] } })
         if (!member) {
-            throw new Error('User with id ${creatorId} has not joined the community ${communityId}')
+            throw new Error(`User with id ${userId} has not joined the community ${communityId}`)
         }
 
 
@@ -453,7 +457,7 @@ export class EventsService {
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
         console.log(event)
-        const eventCheck = await this.communityModel.find({ _id: communityId, events: { $in: [event._id] } })
+        const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
         }

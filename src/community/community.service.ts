@@ -258,7 +258,7 @@ export class CommunityService {
     
         }
         else {
-            throw new Error('User with id ${userId} dosent exist')
+            throw new Error(`User with id ${userId} dosent exist`)
 
         }
 
@@ -267,12 +267,12 @@ export class CommunityService {
     async deleteCommunityById(communityId: ObjectId, userId: string): Promise<any> {
         const community = await this.communityModel.findById(communityId);
         if (!community) {
-            throw new Error('community with id ${communityId} not found')
+            throw new Error(`community with id ${communityId} not found`)
         }
         const creator = await this.communityModel.findOne({ _id: community._id, adminId: new mongoose.Types.ObjectId(userId) })
 
         if (!creator) {
-            throw new Error('User with id ${userId} not an admin')
+            throw new Error(`User with id ${userId} not an admin`)
 
 
         }
@@ -308,13 +308,13 @@ export class CommunityService {
         const community = await this.communityModel.findById(communityId);
 
          if (!community) {
-            throw new Error('community with id ${communityId} not found')}
+            throw new Error(`community with id ${communityId} not found`)}
             
         const creator = await this.communityModel.findOne({_id: community._id, adminId: new mongoose.Types.ObjectId(userId)})
 
             if(!creator)
             {
-                throw new Error('User with id ${userId} not an admin')
+                throw new Error(`User with id ${userId} not an admin`)
     
                 
             }
@@ -345,7 +345,7 @@ export class CommunityService {
         const admin = await this.userModel.findById(new mongoose.Types.ObjectId(userId));
 
         if (!admin) {
-            throw new Error('Admin with id ${userId} not found ')
+            throw new Error(`Admin with id ${userId} not found `)
 
         }
 
