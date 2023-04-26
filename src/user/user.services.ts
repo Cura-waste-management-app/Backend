@@ -5,15 +5,18 @@ import { Location, locationDocument } from "src/schemas/location.schema";
 import { User, userDocument } from "src/schemas/user.schema";
 import { UserDto } from "./dto";
 import { UCI, uciDocument } from "src/schemas/uciCode.schema";
+import { userError } from "src/error_messages";
+import { FirebaseUID, firebaseUidDocument } from "src/schemas/firebaseUid.schema";
 
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<userDocument>,
         @InjectModel(Location.name) private locationModel: Model<locationDocument>,
-        @InjectModel(UCI.name) private uciModel: Model<uciDocument>) { }
+        @InjectModel(UCI.name) private uciModel: Model<uciDocument>,
+        @InjectModel(FirebaseUID.name) private firebaseUIDModel: Model<firebaseUidDocument>) { }
 
     async addUser(dto: UserDto): Promise<any> {
-
+        try{
         // verify uci code if user is NGO or Restaurant
         if (dto.role == "NGO" || dto.role == "Restaurant") {
             // console.log(dto);           
@@ -24,7 +27,7 @@ export class UserService {
             else
             {   
                 console.log("deleteing uci");
-                return await this.uciModel.deleteOne({_id: validUci._id});
+                await this.uciModel.deleteOne({_id: validUci._id});
             }
         }
         
@@ -46,6 +49,26 @@ export class UserService {
         }
 
         const user = await new this.userModel(userData).save();
+
+        // link mongoose uid with firebase uid
+        const firebaseUser = await new this.firebaseUIDModel({_id: dto.uid, mongooseUID: user._id}).save();
+        console.log(firebaseUser);
+
+        return user;
+    }
+        catch(err)
+        {
+            console.log(err);
+            return err;
+        }
+    }
+
+    async getMongooseUID(firebaseUid: string): Promise<any>{
+
+        const user = await this.firebaseUIDModel.findById(firebaseUid);
+        if (user == null) {
+            return new HttpException(userError, HttpStatus.NOT_FOUND);
+        }
         return user;
     }
 
@@ -53,7 +76,7 @@ export class UserService {
 
         const user = await this.userModel.findById(uid);
         if (user == null) {
-            return "User does not exists";
+            return new HttpException(userError, HttpStatus.NOT_FOUND);
         }
         return user;
     }
