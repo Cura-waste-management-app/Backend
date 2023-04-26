@@ -77,7 +77,7 @@ export class CommunityController {
         return await this.communityService.getCommunitiesByName(name);
     }
 
-    @Delete('leavecommunity/:communityId/:userId')
+    @Delete('leavecommunity/:userId/:communityId')
     async leaveEventByUserId(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string,
@@ -89,7 +89,7 @@ export class CommunityController {
     }
 
 
-    @Delete('deletecommunity/:communityId/:userId')
+    @Delete('deletecommunity/:userId/:communityId')
     async deleteCommunity(
         @Param('communityId') communityId: ObjectId,
         @Param('userId') userId: string

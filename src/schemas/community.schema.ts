@@ -35,7 +35,7 @@ export class Community
     // events: Events[]
 
     @Prop({ type:  [{type: mongoose.Schema.Types.ObjectId, ref: 'Events'}]})
-    events: Events[]
+    events: mongoose.Schema.Types.ObjectId[]
 
 
     // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
