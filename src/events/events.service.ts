@@ -340,7 +340,7 @@ export class EventsService {
 
         const isMemberExistInCommunity = await this.communityMemberModel.findOne({ _id: communityId, members: { $in: [creator._id] } })
         
-        if(event && event.creatorId._id.toString()!=userId){
+        if(event && event.creatorId.toString()!=userId){
             throw new Error(`User is not the admin of the event`)
         }
         // console.log(isMemberExistInCommunity)
@@ -444,7 +444,7 @@ export class EventsService {
     }
         }
         else {
-            throw new Error('User with id ${userId} dosent exist')
+            throw new Error(`User with id ${userId} dosent exist`)
 
         }
 
@@ -458,6 +458,7 @@ export class EventsService {
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
         console.log(event)
         const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
+
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
         }

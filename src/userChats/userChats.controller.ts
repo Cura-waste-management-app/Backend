@@ -8,7 +8,7 @@ export class UserChatsController {
     constructor(private readonly chatService: ChatService) { }
 
     @Get(':chatUserID')
-    async getUserChats(@Param('chatUserID') chatUserID: String) {
+    async getUserChats(@Param('chatUserID') chatUserID: ObjectId) {
         // console.log(query);
         return await this.chatService.getUserChats(chatUserID);
     }

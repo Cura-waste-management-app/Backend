@@ -1,10 +1,10 @@
-import { Model, ObjectId } from "mongoose";
+import mongoose, { Model, ObjectId } from "mongoose";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Message, messageDocument } from "src/schemas/message.schema";
 import { ChatUser, chatUserDocument } from "src/schemas/chatUser.schema";
 import { MessageDto } from "./dto";
-import { ConversationPartner,  ConversationPartnerDocument } from "src/schemas/conversationPartner.schema";
+import { ConversationPartner, ConversationPartnerDocument } from "src/schemas/conversationPartner.schema";
 import { ConversationPubSub, conversationPubSubDocument } from "src/schemas/conversation_pubsub.schema";
 import { User, userDocument } from "src/schemas/user.schema";
 import { JoinedEvents, joinedEventsDocument } from "src/schemas/joinedevents.schema";
@@ -18,9 +18,8 @@ export class ChatService {
         @InjectModel(JoinedCommunities.name) private joinedCommunitiesModel: Model<joinedCommunitiesDocument>,
         @InjectModel(ChatUser.name) private chatUserModel: Model<chatUserDocument>, @InjectModel(ConversationPartner.name) private conversationPartnerModel: Model<ConversationPartnerDocument>) { }
 
-    async getUserChats(chatUserID: String): Promise<any> {
+    async getUserChats(chatUserID: ObjectId): Promise<any> {
 
-        const uid = "00000001c2e6895225b91f71";
         try {
 
             // var message = {
@@ -32,10 +31,18 @@ export class ChatService {
             // };
             // await new this.messageModel(message).save();
 
-
+            var joinedCommunitiesDoc = (await this.joinedCommunitiesModel.findById(chatUserID));
+            var events = await this.joinedeventsmodel.find({ userId: chatUserID }, { joinedevents: 1, _id: 0 })
+            var joinedEventsList = [];
+            if (events && events[0]) joinedEventsList = events[0].joinedevents;
+            var conversationPartnersList = [];
+            if (joinedCommunitiesDoc) conversationPartnersList = joinedCommunitiesDoc.joinedCommunities;
+            conversationPartnersList.push(...joinedEventsList)
+            conversationPartnersList.push(chatUserID.toString());
+            console.log(chatUserID, conversationPartnersList);
             var messagesDoc = await this.messageModel.find({
                 $or: [
-                    { receiverId: chatUserID },
+                    { receiverId: { $in: conversationPartnersList } },
                     { senderId: chatUserID }
                 ]
             }).sort({ createdAt: -1 });
@@ -43,7 +50,7 @@ export class ChatService {
             if (!messagesDoc) {
                 throw new HttpException('No messages found', HttpStatus.NOT_FOUND);
             }
-            // console.log(messagesDoc);
+
             return messagesDoc;
 
         }
@@ -69,15 +76,14 @@ export class ChatService {
     async getConversationPartners(userId: ObjectId) {
         //TODO: add all validations......
         var conversationPartners = await this.conversationPartnerModel.findById(userId).populate('usersList', '_id name avatarURL ');
-        var communityList = await this.joinedCommunitiesModel.findById(userId).populate('joinedCommunities','_id name imgURL');
-        var events = await this.joinedeventsmodel.find({userId: userId}).populate('joinedevents', '_id name imgURL');
-        var eventList=events.map(item => item.joinedevents)[0];
-        console.log(eventList,communityList,conversationPartners);
+        var communityList = await this.joinedCommunitiesModel.findById(userId).populate('joinedCommunities', '_id name imgURL');
+        var events = await this.joinedeventsmodel.find({ userId: userId }).populate('joinedevents', '_id name imgURL');
+        var eventList = events.map(item => item.joinedevents)[0];
         var result = {
-            userList: conversationPartners?conversationPartners['usersList']:[],
-            communityList: communityList?communityList.joinedCommunities:[],
-            eventList: eventList?eventList:[]
-          };
+            userList: conversationPartners ? conversationPartners['usersList'] : [],
+            communityList: communityList ? communityList.joinedCommunities : [],
+            eventList: eventList ? eventList : []
+        };
         return result;
     }
     async addConversationPartners(userId: ObjectId, chatUser: ObjectId) {
@@ -91,11 +97,11 @@ export class ChatService {
 
     }
     async subscribeConversation(groupId: ObjectId, userId: ObjectId,): Promise<any> {
-       
+
         var present = true;
         console.log("here");
         if (present) {
-           await this.conversationPubSubModel.findByIdAndUpdate(groupId, { $addToSet: { subscribers: userId } },{ upsert: true })
+            await this.conversationPubSubModel.findByIdAndUpdate(groupId, { $addToSet: { subscribers: userId } }, { upsert: true })
         }
         else {
             throw new Error('User with id ${userId} dosent exist')

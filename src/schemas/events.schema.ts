@@ -18,7 +18,7 @@ export class Events
     communityId: Community
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
-    creatorId: User
+    creatorId: mongoose.Schema.Types.ObjectId
 
     @Prop({default: 0})
     totalMembers: number;

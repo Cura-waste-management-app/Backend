@@ -9,7 +9,7 @@ export type userDocument = User & Document;
 @Schema()
 export class User {
 
-    @Prop({required: true })
+    @Prop()
     _id: mongoose.Schema.Types.ObjectId;
 
     @Prop({ required: true })
