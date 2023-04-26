@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
 import { User, userDocument } from "../schemas/user.schema";
 import '../error_messages';
+import { listingError, userError } from "../error_messages";
 
 @Injectable()
 export class UserRequestsService {
@@ -42,7 +43,6 @@ export class UserRequestsService {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
 
-            // var listingsDoc = (await this.userModel.findById(uid).populate({ path: 'itemsRequested', populate: { path: 'location' } }));
             var listingsDoc = (await this.userModel.findById(uid).populate(
                 {
                     path: 'itemsRequested',
@@ -54,11 +54,7 @@ export class UserRequestsService {
             var listings = listingsDoc.itemsRequested;
 
             //never use asyn/await with callbacks
-            if (!listings)
-                throw new HttpException('The user have not listed anything yet!', HttpStatus.NOT_FOUND);
-            else {
-                return listings;
-            }
+              return listings;          
         }
 
         catch (error) {
@@ -69,7 +65,6 @@ export class UserRequestsService {
 
     async deleteRequest(listingID: ObjectId, uid: ObjectId): Promise<any> {
         try {
-
             const user = await this.userModel.exists({ _id: uid });
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
