@@ -59,6 +59,14 @@ export class EventsController {
 
     }
 
+    @Get('geteventbyid/:eventId')
+    async getCommunityById(
+        @Param('eventId') eventId: string
+    )
+    {
+        return await this.eventsService.getEventById(eventId);
+    }
+
     @Get('checkifthememberexist/:communityId/:userId/:eventId')
     async checkifthememberexist(
         @Param('communityId') communityId: ObjectId,

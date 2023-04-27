@@ -470,6 +470,20 @@ export class EventsService {
 
     }
 
+    async getEventById(eventId: string): Promise<Event[]>
+    {
+        try {
+            return (await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId)));
+
+        }
+        catch (error) {
+            console.log('This event dosent exist');
+            return error;
+        }
+
+
+    }
+
 
 }
 
