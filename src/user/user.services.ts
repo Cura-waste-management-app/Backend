@@ -17,10 +17,16 @@ export class UserService {
 
     async addUser(dto: UserDto): Promise<any> {
         try{
+            console.log("dto", dto);
         // verify uci code if user is NGO or Restaurant
         if (dto.role == "NGO" || dto.role == "Restaurant") {
             // console.log(dto);           
-            const validUci = await this.uciModel.exists({ entityName: dto.name, uciCode: dto.uciCode });
+            const validUci = await this.uciModel.exists({ entityName: dto.name, uciCode: dto.uciCode }).
+            collation({
+                locale: 'en',
+                strength: 2
+            });
+            
             if (validUci == null) {
                 return "UCI code is not valid!";
             }
@@ -49,10 +55,11 @@ export class UserService {
         }
 
         const user = await new this.userModel(userData).save();
+        console.log("user - ", user._id);
 
         // link mongoose uid with firebase uid
         const firebaseUser = await new this.firebaseUIDModel({_id: dto.uid, mongooseUID: user._id}).save();
-        console.log(firebaseUser);
+        // console.log(firebaseUser);
 
         return user;
     }

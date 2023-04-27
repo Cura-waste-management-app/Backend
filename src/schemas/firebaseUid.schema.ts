@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document} from "mongoose";
+import mongoose, { Document} from "mongoose";
 
 // for what???// for what??? to form Listing class as a document?
 export type firebaseUidDocument = FirebaseUID & Document;
@@ -11,7 +11,7 @@ export class FirebaseUID {
     _id: string;
 
     @Prop({required: true})
-    mongooseUID: string
+    mongooseUID: mongoose.Schema.Types.ObjectId;
 
 }
 
