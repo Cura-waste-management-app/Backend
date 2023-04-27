@@ -74,9 +74,9 @@ export class UserService {
 
         const user = await this.firebaseUIDModel.findById(firebaseUid);
         if (user == null) {
-            return new HttpException(userError, HttpStatus.NOT_FOUND);
+            throw new HttpException(userError, HttpStatus.NOT_FOUND);
         }
-        return user;
+        return await this.userModel.findById(user.mongooseUID);
     }
 
     async getUserInfo(uid: ObjectId): Promise<any> {
@@ -115,7 +115,6 @@ export class UserService {
         }catch(err){
             console.log(err);
             return err;
-
         }
     }
 
