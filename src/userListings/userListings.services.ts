@@ -16,31 +16,29 @@ export class UserListingsService {
     async getListings(uid: ObjectId): Promise<any> {
 
         try {
-            // console.log(uid);
             const user = await this.userModel.exists({ _id: uid });
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            var listingsDoc = (await this.userModel.findById(uid).populate({
-                path: 'itemsListed', 
+            var listingsDoc = await this.userModel.findById(uid).populate({
+                path: 'itemsListed',
                 populate: [{ path: 'location' },
                 { path: 'owner', select: 'name' },
                 { path: 'requestedUsers', select: 'name avatarURL points' }]
-            }));
-            var listings = listingsDoc.itemsListed;        
+            });
+            var listings = listingsDoc.itemsListed;
             return listings;
-            
+
         }
         catch (error) {
             console.log(error);
-            return error;
+            throw error;
         }
     };
 
     async deleteListing(listingID: ObjectId, uid: ObjectId): Promise<any> {
         try {
-
-            const listing = await this.listingModel.findById(listingID, 'requestedUsers');
+            const listing = await this.listingModel.findById(listingID, 'requestedUsers location');
             if (!listing) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
@@ -48,7 +46,7 @@ export class UserListingsService {
             // remove listing from the user's itemsListed
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsListed: listingID } });
             if (!doc) {
-                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
 
             // remove listing from the requested user's itemsRequested
@@ -56,16 +54,15 @@ export class UserListingsService {
                 await this.userModel.findByIdAndUpdate(listing.requestedUsers[i], { $pull: { itemsRequested: listingID } });
             }
 
-            const listingObj = await this.listingModel.findById(listingID, 'location');
             // delete location object from location collection
-            await this.locationModel.deleteOne({_id: listingObj.location});
+            await this.locationModel.deleteOne({ _id: listing.location });
 
             // remove listing from the listing collection
             await this.listingModel.deleteOne({ _id: listingID });
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
     }
 
@@ -77,9 +74,9 @@ export class UserListingsService {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
 
-            const sharedUser = await this.userModel.exists({_id: sharedUserID});
+            const sharedUser = await this.userModel.exists({ _id: sharedUserID });
             if (sharedUser == null)
-                return "User does not exists!";
+                throw new HttpException(userError, HttpStatus.NOT_FOUND);
 
             // console.log(sharedUserID._id);
             const doc = await this.listingModel.updateOne({ _id: listingID },
@@ -90,7 +87,7 @@ export class UserListingsService {
                 });
 
             if (!doc) {
-                throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
             else {
                 console.log("listing updated: ", doc);
@@ -99,29 +96,28 @@ export class UserListingsService {
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
     }
 
     async addListing(dto: ListingDto): Promise<any> {
-            
-        const locationData = JSON.parse(dto.location);
-        const locationObj = await new this.locationModel(locationData).save();
-
-        const data = {
-            title: dto.title,
-            description: dto.description,
-            category: dto.category,
-            postTimeStamp: new Date(),
-            status: "Active",
-            owner: new mongoose.Types.ObjectId(dto.ownerID),
-            location: locationObj._id,
-            imagePath: dto.imagePath
-        }
-        // console.log(data);
-
 
         try {
+            const locationData = JSON.parse(dto.location);
+            const locationObj = await new this.locationModel(locationData).save();
+
+            const data = {
+                title: dto.title,
+                description: dto.description,
+                category: dto.category,
+                postTimeStamp: new Date(),
+                status: "Active",
+                owner: new mongoose.Types.ObjectId(dto.ownerID),
+                location: locationObj._id,
+                imagePath: dto.imagePath
+            }
+            // console.log(data);
+
             const listing = await new this.listingModel(data).save();
 
             await this.userModel.findByIdAndUpdate(dto.ownerID, { $push: { itemsListed: listing._id } });
@@ -129,40 +125,38 @@ export class UserListingsService {
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
 
     }
 
     async updateListing(dto: ListingDto): Promise<any> {
-        
-        // delete prev location
-        const listingID = dto.listingID;
-        const listingObj = await this.listingModel.findById(listingID, 'location');
-        await this.locationModel.deleteOne({_id: listingObj.location});
-
-        // add new location
-        const locationData = JSON.parse(dto.location);
-        const locationObj = await new this.locationModel(locationData).save();
-
-
-        // update listing
-        const data = {
-            'title': dto.title,
-            'description': dto.description,
-            'category': dto.category,
-            'location': locationObj._id,
-            'imagePath': dto.imagePath
-        }
-        // console.log(data);
 
         try {
-            const listing = await this.listingModel.updateOne({ _id: listingID }, data);
+            const listingID = dto.listingID;
+            const listingObj = await this.listingModel.findById(listingID, 'location');
+            if (listingObj == null) {
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
+            }
+            // update location document
+            const locationData = JSON.parse(dto.location);
+            await this.locationModel.findByIdAndUpdate(listingObj.location, locationData);
+
+            // update listing
+            const data = {
+                'title': dto.title,
+                'description': dto.description,
+                'category': dto.category,
+                'imagePath': dto.imagePath
+            }
+            // console.log(data);
+
+            await this.listingModel.updateOne({ _id: listingID }, data);
 
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
 
     }
