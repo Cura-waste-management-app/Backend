@@ -1,4 +1,4 @@
-import mongoose, { Model, ObjectId } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Listing, listingDocument } from "../schemas/listing.schema";
@@ -13,9 +13,7 @@ export class UserRequestsService {
 
     async addRequest(listingID: ObjectId, uid: ObjectId) {
 
-        console.log(listingID, uid);
         try {
-
             const user = await this.userModel.exists({ _id: uid });
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
@@ -30,7 +28,7 @@ export class UserRequestsService {
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
 
     }
@@ -59,7 +57,7 @@ export class UserRequestsService {
 
         catch (error) {
             console.log(error);
-            return error;
+            throw error;
         }
     };
 
@@ -69,30 +67,29 @@ export class UserRequestsService {
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
             }
-            const listing = await this.listingModel.exists({ _id: listingID });
-            if (listing == null) {
+            const checkListing = await this.listingModel.exists({ _id: listingID });
+            if (checkListing == null) {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
 
             await this.listingModel.findByIdAndUpdate(listingID, { $pull: { requestedUsers: uid } });
-            const listing2 = await this.listingModel.findById(listingID);
-            listing2.requests = listing2.requests - 1;
-            await listing2.save();
+            const listing = await this.listingModel.findById(listingID);
+            listing.requests = listing.requests - 1;
+            await listing.save();
             const doc = await this.userModel.findByIdAndUpdate(uid, { $pull: { itemsRequested: listingID } });
             if (!doc) {
-                throw new HttpException('No listing with given id present', HttpStatus.NOT_FOUND);
+                throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
     }
 
     async ReceiveListing(listingID: ObjectId, uid: ObjectId): Promise<any> {
 
         try {
-
             const user = await this.userModel.exists({ _id: uid });
             if (user == null) {
                 throw new HttpException(userError, HttpStatus.NOT_FOUND);
@@ -107,12 +104,11 @@ export class UserRequestsService {
             if (!listing.sharedUserID || listing.sharedUserID.toString() != uid.toString())
                 return "No confirmation from the sender!";
             else {
-
                 const doc = await this.listingModel.updateOne({ _id: listingID },
                     {
                         'status': 'Shared'
                     });
-                console.log(doc);
+                // console.log(doc);
 
                 const receiver = await this.userModel.findById(uid, 'itemsReceived');
                 await this.userModel.updateOne({ _id: uid },
@@ -128,11 +124,10 @@ export class UserRequestsService {
                 return "Item received!";
             }
 
-
         }
         catch (err) {
             console.log(err);
-            return err;
+            throw err;
         }
     }
 
