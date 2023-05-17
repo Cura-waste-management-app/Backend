@@ -164,7 +164,7 @@ export class EventsService {
                 }
                 else {
 
-                    return await this.joinedeventsmodel.findOneAndUpdate({unqiqueId:output}, { $push: { joinedevents: event._id } })
+                    return await this.joinedeventsmodel.findOneAndUpdate({uniqueId:output}, { $push: { joinedevents: event._id } })
 
                 }
                 
