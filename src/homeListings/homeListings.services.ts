@@ -27,8 +27,8 @@ export class HomeListingsService {
                 }
                 
                 
-                console.log(user);
-                console.log(listings);
+                // console.log(user);
+                // console.log(listings);
                 return {listings,user};
             }
             catch (err) {
@@ -84,7 +84,7 @@ export class HomeListingsService {
                     lastmonthlisted: lastmonthlisted,
                     points: user.points,
                 }
-                console.log(data);
+                // console.log(data);
                 return data;
 
             }catch(err){
@@ -140,8 +140,8 @@ export class HomeListingsService {
             if(!listing){
                 throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
             }
-            console.log("Listing ka status");
-            console.log(listing.status=='Active');
+            // console.log("Listing ka status");
+            // console.log(listing.status=='Active');
             if(listing.status!='Active'){
                 throw new HttpException('Listing is no more active', HttpStatus.NOT_FOUND);
             }
@@ -192,8 +192,8 @@ export class HomeListingsService {
                 throw new HttpException('No listing found', HttpStatus.NOT_FOUND);
             }
 
-            console.log("Listing ka status");
-            console.log(listing.status=='Active');
+            // console.log("Listing ka status");
+            // console.log(listing.status=='Active');
             if(listing.status!='Active'){
                 throw new HttpException('Listing is no more active', HttpStatus.NOT_FOUND);
             }

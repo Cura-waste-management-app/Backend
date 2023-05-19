@@ -39,7 +39,7 @@ export class ChatService {
             if (joinedCommunitiesDoc) conversationPartnersList = joinedCommunitiesDoc.joinedCommunities;
             conversationPartnersList.push(...joinedEventsList)
             conversationPartnersList.push(chatUserID.toString());
-            console.log(chatUserID, conversationPartnersList);
+            // console.log(chatUserID, conversationPartnersList);
             var messagesDoc = await this.messageModel.find({
                 $or: [
                     { receiverId: { $in: conversationPartnersList } },
@@ -99,7 +99,6 @@ export class ChatService {
     async subscribeConversation(groupId: ObjectId, userId: ObjectId,): Promise<any> {
 
         var present = true;
-        console.log("here");
         if (present) {
             await this.conversationPubSubModel.findByIdAndUpdate(groupId, { $addToSet: { subscribers: userId } }, { upsert: true })
         }
@@ -110,7 +109,6 @@ export class ChatService {
 
     }
     async unsubscribeConversation(groupId: ObjectId, userId: ObjectId,): Promise<any> {
-        console.log('here');
         var present = true;
         if (present) {
             await this.conversationPubSubModel.findByIdAndUpdate(groupId, { $pull: { subscribers: userId } })

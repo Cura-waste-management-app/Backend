@@ -15,17 +15,14 @@ export class UserChatsController {
 
     @Post('addMessage')
     async addMessage(@Body() dto: MessageDto) {
-        console.log("here");
         await this.chatService.addMessage(dto);
     }
     @Get('get-conversation-partners/:userId')
     async getConversationPartners(@Param('userId') userId:ObjectId){
-        console.log('here')
           return  this.chatService.getConversationPartners(userId);
     }
     @Post('add-conversation-partners/:userId/:chatUser')
     async addConversationPartners(@Param('userId') userId:ObjectId,@Param('chatUser') chatUser:ObjectId){
-        console.log('here')
           return  this.chatService.addConversationPartners(userId,chatUser);
     }
     @Post('subscribe/:groupId/:userId')

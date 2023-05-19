@@ -40,7 +40,7 @@ export class CommunityController {
         @Param('communityId') communityId: ObjectId,
     )
     {
-    console.log(userId," in controller ");
+    // console.log(userId," in controller ");
     return await this.communityService.joinCommunity(userId,communityId)
 
     }
@@ -105,7 +105,7 @@ export class CommunityController {
     @Param('communityId') communityId: ObjectId,
     @Param('userId') userId: string,
     @Body() dto: CommunityDto) {
-        console.log(dto);
+        // console.log(dto);
         return await this.communityService.updateCommunity(communityId,dto,userId);
     }
 

@@ -26,7 +26,6 @@ export class UserController {
 
     @Post('updateUser')
     async updateUser(@Body() dto: UserDto) {
-        console.log(dto);
         return await this.userService.updateUser(dto);
     }
 

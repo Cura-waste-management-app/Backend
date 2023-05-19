@@ -27,13 +27,12 @@ export class ChatGateway {
 @SubscribeMessage('groupChat') // name of the message we are listening to from client side
     async handleGroupMessage(@MessageBody() message: Object) {
         
-    console.log("groupchat ",message );
+    // console.log("groupchat ",message );
     const conversation=await this.conversationPubSubModel.findById(message['receiverId'],'subscribers');
-    console.log(conversation)
     conversation.subscribers.forEach((connectionId)=>{
         if(connectionId!=message['senderId']){
             var url = `chat/${connectionId}`;
-            console.log("sending message to ",url);
+            // console.log("sending message to ",url);
             this.socket.emit(url,JSON.stringify(message));
         }
 
@@ -47,7 +46,7 @@ export class ChatGateway {
     @SubscribeMessage('chat') // name of the message we are listening to from client side
     handleMessage(@MessageBody() message: Object): void {
 
-        console.log("sending message to ", message['receiverId']);
+        // console.log("sending message to ", message['receiverId']);
         var url = `chat/${message['receiverId']}`;
 
         this.socket.emit(url, JSON.stringify(message));

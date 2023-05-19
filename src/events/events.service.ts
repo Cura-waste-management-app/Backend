@@ -21,14 +21,13 @@ export class EventsService {
 
     async addNewEvent(dto: EventsDto, communityId: ObjectId, creatorId: string): Promise<any> {
         const community = await this.communityMemberModel.findById(communityId);
-        console.log(community);
+        // console.log(community);
         const creator = await this.userModel.findById(new mongoose.Types.ObjectId(creatorId));
-        console.log(creator);
+        // console.log(creator);
 
 
         const isMemberExistInCommunity = await this.communityMemberModel.findOne({ _id: communityId, members: { $in: [creator._id] } })
-        console.log("hei")
-        console.log(isMemberExistInCommunity)
+        // console.log(isMemberExistInCommunity)
 
 
         //  const members =  community.members;
@@ -99,9 +98,9 @@ export class EventsService {
 
     async joinEvent(communityId: ObjectId, userId: string, eventId: string): Promise<any> {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
-        console.log(user);
+        // console.log(user);
         const community = await this.communityModel.findById(communityId);
-        console.log(community);
+        // console.log(community);
         if (!user) {
             throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);
         }
@@ -111,7 +110,7 @@ export class EventsService {
 
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-        console.log(event)
+        // console.log(event)
         const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
@@ -144,7 +143,7 @@ export class EventsService {
                     joinedevents: [eventId]
                 }
 
-                console.log("output", output)
+        
 
                 // const event = await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId))
                 // event.totalMembers = event.totalMembers + 1;
@@ -237,8 +236,8 @@ export class EventsService {
 
 
                 }
-                console.log(data.name)
-                console.log(typeof (data.name))
+                // console.log(data.name)
+                // console.log(typeof (data.name))
 
                 return await this.eventsmodel.findByIdAndUpdate(new mongoose.Types.ObjectId(eventId), { $set: { description: data.description, name: data.name, imgURL: data.imgURL, location: data.location } })
 
@@ -262,7 +261,7 @@ export class EventsService {
 
 
         var myevents = await this.getMyEvents(communityId, userId);
-        console.log('my events ',myevents)
+        // console.log('my events ',myevents)
         myevents =myevents? myevents.joinedevents:[];
         // console.log(myevents.joinedevents)
         var exploreList = []
@@ -289,7 +288,7 @@ export class EventsService {
                 myeventsList.push(allevents.events.at(alleventsIndex));
             }
         }
-        console.log(exploreList.length, myeventsList.length, allevents.events.length)
+        // console.log(exploreList.length, myeventsList.length, allevents.events.length)
         // const result = allevents.events.filter(a => !myevents.find((b: => a.name === b.name))
         //     allevents.events.filter(itemA => !myevents.some(itemB => itemA._id === itemB._id))
 
@@ -332,7 +331,7 @@ export class EventsService {
 
         const community = await this.communityMemberModel.findById(communityId);
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-        console.log('eventId ',eventId)
+        // console.log('eventId ',eventId)
         // console.log(community);
         const creator = await this.userModel.findById(user_id);
         // console.log(creator);
@@ -360,7 +359,7 @@ export class EventsService {
 
         const eventCheck = await this.communityModel.findOne({ events: { $in: [event._id] } })
         
-        console.log(eventCheck)
+        // console.log(eventCheck)
 
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
@@ -368,21 +367,20 @@ export class EventsService {
         else {
             const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
             const event_members = (await this.eventmembersmodel.findById(event._id)).members
-            console.log("helloo again")
-            console.log(event_members)
+            // console.log(event_members)
 
             for (var e = 0; e < event_members.length; e++) {
-                console.log(event_members.at(e));
+                // console.log(event_members.at(e));
                 const output =  String(event_members.at(e))+communityId;
-                console.log('output ',output)
+                // console.log('output ',output)
                 await this.joinedeventsmodel.findOneAndUpdate({uniqueId:output}, { $pull: { joinedevents: event._id } })
-                console.log("delete from joined event succesfull")
+                // console.log("delete from joined event succesfull")
             }
-            console.log("deleting event members")
+            // console.log("deleting event members")
             await this.eventmembersmodel.findByIdAndDelete(event._id)
-            console.log("deleteing from community model")
+            // console.log("deleteing from community model")
             await this.communityModel.findByIdAndUpdate(community._id, { $pull: { events: event._id } })
-            console.log("deleting event model")
+            // console.log("deleting event model")
             await this.eventsmodel.findByIdAndDelete(event._id)
         }
 
@@ -392,9 +390,9 @@ export class EventsService {
 
     async checkIfTheUserExistEvent(communityId: ObjectId, userId: string, eventId: string) {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
-        console.log(user);
+        // console.log(user);
         const community = await this.communityModel.findById(communityId);
-        console.log(community);
+        // console.log(community);
         if (!user) {
             throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);
         }
@@ -404,7 +402,7 @@ export class EventsService {
 
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-        console.log(event)
+        // console.log(event)
         const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
         if (!eventCheck) {
             throw new HttpException('This event dosent exist in the community', HttpStatus.NOT_FOUND)
@@ -420,7 +418,7 @@ export class EventsService {
         // const output = createId(communityId, userId)
         const output = userId + communityId;
         const checkEvent = await this.joinedeventsmodel.find({uniqueId: output, joinedevents: { $in: [new mongoose.Types.ObjectId(eventId)] } })
-        console.log(checkEvent)
+        // console.log(checkEvent)
 
         var present = true
         if (checkEvent.length == 0) {
@@ -456,7 +454,7 @@ export class EventsService {
 
         }
         const event = await this.eventsmodel.findById(new mongoose.Types.ObjectId(eventId));
-        console.log(event)
+        // console.log(event)
         const eventCheck = await this.communityModel.findOne({ _id: communityId, events: { $in: [event._id] } })
 
         if (!eventCheck) {
@@ -464,7 +462,7 @@ export class EventsService {
         }
 
         const members = (await this.eventmembersmodel.findById(event._id)).populate('members')
-        console.log(members)
+        // console.log(members)
 
         return members;
 
@@ -495,14 +493,14 @@ export class EventsService {
 
 function createId(communityId: ObjectId, userId: string): any {
     const id = userId + communityId
-    console.log(id)
+    // console.log(id)
     const bytes = Buffer.from(id, 'hex')
     const hash_object = createHash('sha256')
     hash_object.update(bytes);
     const output_bytes = hash_object.digest();
     const output_str = output_bytes.toString('hex').slice(40)
 
-    console.log(output_str)
+    // console.log(output_str)
 
     const output = new mongoose.Types.ObjectId(output_str)
 

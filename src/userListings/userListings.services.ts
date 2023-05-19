@@ -90,7 +90,7 @@ export class UserListingsService {
                 throw new HttpException(listingError, HttpStatus.NOT_FOUND);
             }
             else {
-                console.log("listing updated: ", doc);
+                // console.log("listing updated: ", doc);
                 return "Status of listing updated successfully!";
             }
         }
@@ -213,7 +213,7 @@ export class UserListingsService {
         listing2 = await listing2.save();
 
 
-        console.log(listing1);
+        // console.log(listing1);
         // always pass object as the argument of model while creating instance
         const user = new this.userModel({ _id: uid, name: 'Rohit', itemsListed: [listing1._id, listing2._id], role: "Individual", location: location._id });
         return user.save();

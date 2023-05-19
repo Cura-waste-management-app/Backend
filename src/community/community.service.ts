@@ -148,7 +148,7 @@ export class CommunityService {
     async joinCommunity(userId: string, communityId: ObjectId): Promise<any> {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
         const community = await this.communityModel.findById(communityId);
-        console.log(userId, user, typeof (userId));
+        // console.log(userId, user, typeof (userId));
         if (!user) {
             throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);
         }
@@ -182,7 +182,7 @@ export class CommunityService {
                   
                 await this.conversationPubSubModel.findByIdAndUpdate(communityId, { $addToSet: { subscribers: userId } }, { upsert: true }); 
                 const d1 = await this.communityMemberModel.findByIdAndUpdate(communityId, { $push: { members: userId } })
-                console.log(d1);
+                // console.log(d1);
                 await this.joinedCommunitiesModel.findByIdAndUpdate(new mongoose.Types.ObjectId(userId), { $push: { joinedCommunities: community._id } },{upsert : true});
                 // if (!user) {
                 //     console.log("no user here")
@@ -217,9 +217,9 @@ export class CommunityService {
     };
     async checkIfTheUserExistCommunity(communityId: ObjectId, userId: string) {
         const user = await this.userModel.findById(new mongoose.Types.ObjectId(userId))
-        console.log(user);
+        // console.log(user);
         const community = await this.communityModel.findById(communityId);
-        console.log(community);
+        // console.log(community);
         if (!user) {
             throw new HttpException("User dosent exist", HttpStatus.NOT_FOUND);
         }
@@ -281,7 +281,7 @@ export class CommunityService {
             const members = (await this.communityMemberModel.findById(community._id)).members
             const events =  (await this.communityModel.findById(community._id)).events
 
-            console.log(events);
+            // console.log(events);
             events.forEach(async (event)=>
                 await this.eventService.deleteEventById(communityId,userId,event.toString())
             )
@@ -293,7 +293,7 @@ export class CommunityService {
             //     { $pull: { joinedCommunities: community._id } }
             //   );
             for (var c = 0; c < members.length; c++) {
-                console.log(members.at(c))
+                // console.log(members.at(c))
                 await this.joinedCommunitiesModel.findByIdAndUpdate(members.at(c), { $pull: { joinedCommunities: community._id } })
             }
             await this.communityMemberModel.findByIdAndDelete(community._id)
