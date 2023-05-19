@@ -78,7 +78,7 @@ export class ChatService {
         var conversationPartners = await this.conversationPartnerModel.findById(userId).populate('usersList', '_id name avatarURL ');
         var communityList = await this.joinedCommunitiesModel.findById(userId).populate('joinedCommunities', '_id name imgURL');
         var events = await this.joinedeventsmodel.find({ userId: userId }).populate('joinedevents', '_id name imgURL');
-        var eventList = events.map(item => item.joinedevents)[0];
+        var eventList = events.map(item => item.joinedevents).flat();
         var result = {
             userList: conversationPartners ? conversationPartners['usersList'] : [],
             communityList: communityList ? communityList.joinedCommunities : [],
