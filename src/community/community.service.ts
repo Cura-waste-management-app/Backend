@@ -94,7 +94,7 @@ export class CommunityService {
 
     }
 
-    async getallCommunities(userId: ObjectId, @Query('offset') offset = 0, @Query('limit') limit = 10): Promise<Community[]> {
+    async getallCommunities(userId: ObjectId, @Query('offset') offset = 0, @Query('limit') limit = 100): Promise<Community[]> {
         const user = await this.userModel.findById(userId, 'role');
         // console.log("role - ", userDoc.role);
         if(user.role == "Individual")
