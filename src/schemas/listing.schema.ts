@@ -51,4 +51,4 @@ export class Listing {
 }
 
 export const listingSchema = SchemaFactory.createForClass(Listing);
-listingSchema.index({'location.city' :1}, {unique: true});
+listingSchema.index({'location.city' :1});
